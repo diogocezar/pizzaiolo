@@ -6,13 +6,13 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  sendMessage(): string {
-    return this.appService.sendMessage();
+  ping(): string {
+    return 'pong';
   }
 
   @Post('/webhook')
   webhook(@Body() params: any): string {
-    console.log(params);
-    return 'ok';
+    return this.appService.sendMessage(params);
+    return 'Success';
   }
 }

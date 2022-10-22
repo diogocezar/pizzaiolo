@@ -4,10 +4,8 @@ import { SlackService } from 'nestjs-slack';
 @Injectable()
 export class AppService {
   constructor(private slack: SlackService) {}
-  sendMessage(): string {
-    const message = 'Pizza is ready!';
-    console.log(process.env);
+  sendMessage(params): any {
+    const message = `New Pizza! \n ${JSON.stringify(params)}`;
     this.slack.sendText(message, { channel: process.env.CHANNEL });
-    return message;
   }
 }
