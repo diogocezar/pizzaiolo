@@ -11,8 +11,7 @@ export class AppController {
   }
 
   @Post('/webhook')
-  webhook(@Body() params: any): string {
-    return this.appService.sendMessage(params);
-    return 'Success';
+  webhook(@Body() payload: any): boolean {
+    return this.appService.sendMessage(payload);
   }
 }
