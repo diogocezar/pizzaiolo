@@ -1,0 +1,19 @@
+name: deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Executa os comandos no servidor
+    runs-on: self-hosted
+    steps:
+      - run: |
+          echo "Diretório Raiz"
+          cd /home/ubuntu/www/pizzaiolo
+          echo "Atualizando o repositório"
+          git pull origin main
+          echo "Compilando o projeto"
+          yarn build
+          echo "Reiniciando o PM2"
+          pm2 restart pizzaiolo
