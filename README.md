@@ -1,22 +1,20 @@
 <p align="center">
-  <img src="./assets/images/pizzaiolo.png" alt="Logo Pizzaiolo" width="200" height="200">
+  <img src="./assets/images/pizzaiolo.png" alt="Logo Pizzaiolo" width="250" height="200">
 </p>
 <h1 align="center">
   Pizzaiolo
 </h1>
 
-![GitHub repo size](https://img.shields.io/github/repo-size/iuricode/README-template?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/iuricode/README-template?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/iuricode/README-template?style=for-the-badge)
-
 ## Sumário
 
-- [O que é?](#o-que-e)
-- [DesignDoc](#design-doc)
-- [Desenvolvendo](#desenvolvendo)
-  - [Executando testes](#executando-testes)
-- [Arquitetura](#arquitetura)
-- [Variáveis de ambiente](#variáveis-de-ambiente)
+- [Sumário](#sumário)
+- [👉 O que é?](#-o-que-é)
+- [💻 Pré-requisitos](#-pré-requisitos)
+- [🚀 Instalação](#-instalação)
+- [☕ Configurando Pizzaiolo](#-configurando-pizzaiolo)
+- [📫 Contribuindo para <nome_do_projeto>](#-contribuindo-para-nome_do_projeto)
+- [🤝 Colaboradores](#-colaboradores)
+- [😄 Seja um dos contribuidores<br>](#-seja-um-dos-contribuidores)
 
 ## 👉 O que é?
 
