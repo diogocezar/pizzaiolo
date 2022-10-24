@@ -30,11 +30,11 @@ Isso ajuda os Desenvolvedores a manterem uma cultura de revisão constante de c�
 
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
-* Uma conta ativa no slack e a permissão para a criação de um bot;
-* Uma conta ativa no GitHub e a permissão para criar webhooks;
-* Um lugar para hospedar o bot;
-* NodeJS;
-* Yarn;
+- Uma conta ativa no slack e a permissão para a criação de um bot;
+- Uma conta ativa no GitHub e a permissão para criar webhooks;
+- Um lugar para hospedar o bot;
+- NodeJS;
+- Yarn;
 
 ## 🚀 Instalação
 
@@ -51,10 +51,11 @@ yarn start
 
 TBD
 
+Você também precisará configurar o Slack. E pode encontrar a documentação para isso [aqui](https://github.com/diogocezar/pizzaiolo/blob/main/SLACK_CONFIG.md)
+
 ## 📫 Contribuindo para o Pizzaiolo
 
 Veja a seção de [contribuição](CONTRIBUTING.md).
-
 
 Como alternativa, consulte a documentação do GitHub em [como criar uma solicitação pull](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
@@ -82,7 +83,6 @@ Agradecemos às seguintes pessoas que contribuíram para este projeto:
     </td>
   </tr>
 </table>
-
 
 ## 😄 Seja um dos contribuidores<br>
 
