@@ -73,7 +73,7 @@ export class PizzaioloService {
 
   async closedPullRequest({ slackService, html_url }: PayloadAction) {
     const message = in_memory_database.getMessageByPullRequestUrl(html_url)
-    await slackService.addReaction('checkered_flag', message?.ts)
+    await slackService.addReaction('pinched_fingers', message?.ts)
   }
 
   async submittedPullRequest({
