@@ -61,7 +61,7 @@ export class PizzaioloService {
   }: PayloadAction) {
     let message = ''
 
-    message += `🍕 Mama Mia! Que código bonito! 🍕\n`
+    message += `🤌 Mama Mia! Que código bonito! 🤌\n`
     message += formatMessageInfos(created_at, user.login, html_url)
 
     const response = await slackService.sendMessage(message)
