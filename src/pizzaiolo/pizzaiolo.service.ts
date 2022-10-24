@@ -13,6 +13,7 @@ import {
 import { SlackService } from 'src/slack/slack.service'
 import logger from 'src/logger'
 import in_memory_database from 'src/in_memory_database'
+import { format } from 'date-fns'
 
 type Payload =
   | PullRequestPayload
@@ -52,8 +53,15 @@ export class PizzaioloService {
     return validActions.includes(action)
   }
 
+  formatMessageInfos(created_at, login, url) {
+    let str = ''
+    str += `*Data do Pedido*: ${format(created_at, 'DD/MM/YYYY HH:ss')}\n`
+    str += `*Pizzaiolo*: ${login}\n`
+    str += `*Veja essa beleza*: ${url}`
+    return str
+  }
+
   async openedPullRequest({
-    number,
     slackService,
     user,
     created_at,
@@ -61,13 +69,8 @@ export class PizzaioloService {
   }: PayloadAction) {
     let message = ''
 
-    if (number) message += `Número do Pedido: ${number}\n`
-
-    message += `🍕 Saindo uma Pizza do Forno! 🍕\n`
-
-    message += `Data do Pedido: ${created_at}\n`
-    message += `Usuário: ${user.login}\n`
-    message += `URL: ${url}`
+    message += `🍕 Mama Mia! Código bonito! 🍕\n`
+    message += this.formatMessageInfos(created_at, user.login, url)
 
     const response = await slackService.sendMessage(message)
 
@@ -98,7 +101,6 @@ export class PizzaioloService {
   async createdPullRequest({
     comment,
     slackService,
-    number,
     user,
     created_at,
     url,
@@ -107,17 +109,12 @@ export class PizzaioloService {
 
     const messageFound = in_memory_database.getMessageByPullRequestUrl(url)
 
-    if (number) message += `Número do Pedido: ${number}\n`
-
     if (comment) {
-      message += `💭 Um comentário foi adicionado a uma PizzaRequest!\n`
-      message += `Comentário: ${comment.body}\n`
-      message += `Usuário que comentou: ${comment.user.login}\n`
+      message += `🍕 Mama Mia! *Reclamação do Cliente!* 🍕\n`
+      message += `O *${comment.user.login}* falou: ${comment.body}\n`
     }
 
-    message += `Data do Pedido: ${created_at}\n`
-    message += `Usuário: ${user.login}\n`
-    message += `URL: ${url}`
+    message += this.formatMessageInfos(created_at, user.login, url)
 
     const response = await slackService.sendMessage(message, messageFound?.ts)
 
@@ -142,9 +139,7 @@ export class PizzaioloService {
       message += `URL: ${thread.comments[0].url}\n`
     }
 
-    message += `Data do Pedido: ${created_at}\n`
-    message += `Usuário: ${user.login}\n`
-    message += `URL: ${url}`
+    message += this.formatMessageInfos(created_at, user.login, url)
 
     const response = await slackService.sendMessage(message)
 
@@ -167,9 +162,7 @@ export class PizzaioloService {
 
     if (thread) message += `URL: ${thread.comments[0].url}\n`
 
-    message += `Data do Pedido: ${created_at}\n`
-    message += `Usuário: ${user.login}\n`
-    message += `URL: ${url}`
+    message += this.formatMessageInfos(created_at, user.login, url)
 
     const response = await slackService.sendMessage(message)
 
