@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { SlackModule } from 'nestjs-slack';
-import { SlackService } from './slack/slack.service';
-import { PizzaioloService } from './pizzaiolo/pizzaiolo.service';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { ConfigModule } from '@nestjs/config'
+import { SlackModule } from 'nestjs-slack'
+import { SlackService } from './slack/slack.service'
+import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
 
 @Module({
   imports: [
