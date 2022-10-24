@@ -144,16 +144,12 @@ export class PizzaioloService {
 
   async unresolvedPullRequest({
     thread,
-    number,
     slackService,
     user,
     created_at,
     html_url,
   }: PayloadAction) {
     let message = ''
-
-    if (number) message += `Número do Pedido: ${number}\n`
-
     message += `👉 Uma thread foi marcada como aberta!\n`
 
     if (thread) message += `URL: ${thread.comments[0].html_url}\n`
