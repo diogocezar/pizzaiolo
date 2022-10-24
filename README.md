@@ -12,7 +12,7 @@
 - [💻 Pré-requisitos](#-pré-requisitos)
 - [🚀 Instalação](#-instalação)
 - [☕ Configurando Pizzaiolo](#-configurando-pizzaiolo)
-- [📫 Contribuindo para <nome_do_projeto>](#-contribuindo-para-nome_do_projeto)
+- [📫 Contribuindo para o Pizzaiolo](#-contribuindo-para-o-pizzaiolo)
 - [🤝 Colaboradores](#-colaboradores)
 - [😄 Seja um dos contribuidores<br>](#-seja-um-dos-contribuidores)
 
@@ -51,7 +51,7 @@ yarn start
 
 TBD
 
-## 📫 Contribuindo para <nome_do_projeto>
+## 📫 Contribuindo para o Pizzaiolo
 
 Veja a seção de [contribuição](CONTRIBUTING.md).
 
@@ -65,10 +65,18 @@ Agradecemos às seguintes pessoas que contribuíram para este projeto:
 <table>
   <tr>
     <td align="center">
-      <a href="#">
+      <a href="https://github.com/diogocezar">
         <img src="https://github.com/diogocezar.png" width="100px;" alt="Foto do Diogo"/><br>
         <sub>
           <b>Diogo Cezar</b>
+        </sub>
+      </a>
+    </td>
+        <td align="center">
+      <a href="https://github.com/joao208">
+        <img src="https://github.com/joao208.png" width="100px;" alt="Foto do João"/><br>
+        <sub>
+          <b>João Barros</b>
         </sub>
       </a>
     </td>

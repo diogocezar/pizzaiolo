@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common'
-import { SlackService } from 'nestjs-slack'
-import { validatePayload, getMessage } from './helper'
+import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
+import { SlackService } from './slack/slack.service'
 
 @Injectable()
 export class AppService {
-  constructor(private slack: SlackService) {}
+  constructor(
+    private pizzaioloService: PizzaioloService,
+    private slackService: SlackService
+  ) {}
   sendMessage(payload): boolean {
-    if (!validatePayload(payload)) return false
+    if (!this.pizzaioloService.validatePayload(payload)) return false
 
-    const message = getMessage(payload)
+    const message = this.pizzaioloService.getMessage(payload)
 
-    console.log(message)
-
-    this.slack.sendText(message, { channel: process.env.CHANNEL })
+    this.slackService.sendMessage(message)
 
     return true
   }

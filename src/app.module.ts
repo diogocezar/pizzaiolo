@@ -3,6 +3,8 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ConfigModule } from '@nestjs/config'
 import { SlackModule } from 'nestjs-slack'
+import { SlackService } from './slack/slack.service'
+import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
 
 @Module({
   imports: [
@@ -18,6 +20,6 @@ import { SlackModule } from 'nestjs-slack'
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SlackService, PizzaioloService],
 })
 export class AppModule {}
