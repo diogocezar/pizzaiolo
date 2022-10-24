@@ -9,13 +9,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - run: |
-          echo "Diretório Raiz"
           cd /home/ubuntu/www/pizzaiolo
-          echo "Atualizando o repositório"
           git pull origin main
-          echo "Instalando novas dependências"
           yarn
-          echo "Compilando o projeto"
           yarn build
-          echo "Reiniciando o PM2"
           pm2 restart pizzaiolo
