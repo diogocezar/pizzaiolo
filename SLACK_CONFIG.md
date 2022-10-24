@@ -2,12 +2,13 @@
 
 ## Summary
 
-- [Summary](#summary)
-- [Creating the Bot](#creating-the-bot)
-- [Adding to Workspace](#adding-to-workspace)
-- [Getting the token](#getting-the-token)
-- [Adding your bot in channel and copy the channel id](#adding-your-bot-in-channel-and-copy-the-channel-id)
-- [Finishing](#finishing)
+- [How configure Slack Tokens](#how-configure-slack-tokens)
+  - [Summary](#summary)
+  - [Creating the Bot](#creating-the-bot)
+  - [Adding to Workspace](#adding-to-workspace)
+  - [Getting the token](#getting-the-token)
+  - [Adding your bot in channel and copy the channel id](#adding-your-bot-in-channel-and-copy-the-channel-id)
+    - [Finishing](#finishing)
 
 ## Creating the Bot
 
@@ -37,7 +38,7 @@ For copy the channel bot, just copy the link of url, or in desktop, click in cop
 
 The link is looks like: `https://app.slack.com/client/SLACK_WORKSPACE_ID/CHANNEL_ID`
 
-Your channel is the last id, and copy her, and past in `SLACK_TOKEN` env.
+Your channel is the last id, and copy her, and past in `SLACK_CHANNEL` env.
 
 ### Finishing
 

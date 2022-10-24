@@ -76,33 +76,9 @@ export class PizzaioloService {
     logger.info(JSON.stringify(response))
   }
 
-  async closedPullRequest({
-    number,
-    slackService,
-    user,
-    created_at,
-    url,
-    merged,
-  }: PayloadAction) {
-    let message = ''
-
-    if (number) message += `Número do Pedido: ${number}\n`
-
-    if (merged) {
-      message += `🔒 Uma PizzaRequest fechada com sucesso!\n`
-    }
-
-    if (!merged) {
-      message += `🔒 Uma PizzaRequest fechada com commits não mesclados!\n`
-    }
-
-    message += `Data do Pedido: ${created_at}\n`
-    message += `Usuário: ${user.login}\n`
-    message += `URL: ${url}`
-
-    const response = await slackService.sendMessage(message)
-
-    logger.info(JSON.stringify(response))
+  async closedPullRequest({ slackService, url }: PayloadAction) {
+    const message = in_memory_database.getMessageByPullRequestUrl(url)
+    await slackService.addReaction('checkered_flag', message?.ts)
   }
 
   async submittedPullRequest({ review, slackService, url }: PayloadAction) {
