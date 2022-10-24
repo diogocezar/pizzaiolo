@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "9.0.0",
     "axios": "1.1.3",
     "date-fns": "^2.29.3",
+    "date-fns-tz": "^1.3.7",
     "nestjs-slack": "2.0.0",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
