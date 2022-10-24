@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Body, Controller, Get, Post } from '@nestjs/common'
+import { AppService } from './app.service'
 
 @Controller()
 export class AppController {
@@ -7,11 +7,11 @@ export class AppController {
 
   @Get()
   ping(): string {
-    return 'pong';
+    return 'pong'
   }
 
   @Post('/webhook')
   webhook(@Body() payload: any): boolean {
-    return this.appService.sendMessage(payload);
+    return this.appService.sendMessage(payload)
   }
 }
