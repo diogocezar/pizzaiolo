@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Comment, CommentPayload } from 'src/types/comment'
 import { Review, ReviewPayload } from 'src/types/review'
-import { PullRequest, PullRequestPayload } from 'src/types/pull_request'
+import { PullRequest, PullRequestPayload, User } from 'src/types/pull_request'
 import {
   CommentResolvedPayload,
   Thread as ThreadResolved,
@@ -10,6 +10,9 @@ import {
   CommentUnresolvedPayload,
   Thread as ThreadUnresolved,
 } from 'src/types/comment_unresolved'
+import { SlackService } from 'src/slack/slack.service'
+import logger from 'src/logger'
+import in_memory_database from 'src/in_memory_database'
 
 type Payload =
   | PullRequestPayload
@@ -17,6 +20,19 @@ type Payload =
   | CommentResolvedPayload
   | CommentUnresolvedPayload
   | ReviewPayload
+
+interface PayloadAction {
+  merged: boolean
+  review: Review
+  comment: Comment
+  thread: ThreadResolved | ThreadUnresolved
+  draft: boolean
+  slackService: SlackService
+  user: User
+  url: string
+  created_at: Date
+  number: number
+}
 
 @Injectable()
 export class PizzaioloService {
@@ -36,31 +52,86 @@ export class PizzaioloService {
     return validActions.includes(action)
   }
 
-  openedPullRequest() {
-    return `🍕 Saindo uma Pizza do Forno! 🍕\n`
+  async openedPullRequest({
+    number,
+    slackService,
+    user,
+    created_at,
+    url,
+  }: PayloadAction) {
+    let message = ''
+
+    if (number) message += `Número do Pedido: ${number}\n`
+
+    message += `🍕 Saindo uma Pizza do Forno! 🍕\n`
+
+    message += `Data do Pedido: ${created_at}\n`
+    message += `Usuário: ${user.login}\n`
+    message += `URL: ${url}`
+
+    const response = await slackService.sendMessage(message)
+
+    in_memory_database.addMessage({ ...response, pullRequestUrl: url })
+
+    logger.info(JSON.stringify(response))
   }
 
-  closedPullRequest({ merged }: { merged: boolean }) {
+  async closedPullRequest({
+    number,
+    slackService,
+    user,
+    created_at,
+    url,
+    merged,
+  }: PayloadAction) {
+    let message = ''
+
+    if (number) message += `Número do Pedido: ${number}\n`
+
     if (merged) {
-      return `🔒 Uma PizzaRequest fechada com sucesso!\n`
+      message += `🔒 Uma PizzaRequest fechada com sucesso!\n`
     }
 
-    return `🔒 Uma PizzaRequest fechada com commits não mesclados!\n`
-  }
-
-  submittedPullRequest({ review }: { review: Review }) {
-    let message = ''
-
-    if (review) {
-      message += `✅ Uma PizzaRequest foi revisada com sucesso!\n`
-      message += `Usuário que revisou: ${review.user.login}\n`
+    if (!merged) {
+      message += `🔒 Uma PizzaRequest fechada com commits não mesclados!\n`
     }
 
-    return message
+    message += `Data do Pedido: ${created_at}\n`
+    message += `Usuário: ${user.login}\n`
+    message += `URL: ${url}`
+
+    const response = await slackService.sendMessage(message)
+
+    logger.info(JSON.stringify(response))
   }
 
-  createdPullRequest({ comment }: { comment: Comment }) {
+  async submittedPullRequest({ review, slackService, url }: PayloadAction) {
+    const message = in_memory_database.getMessageByPullRequestUrl(url)
+
+    const icon = {
+      commented: 'speech_balloon',
+      approved: 'white_check_mark',
+      changes_requested: 'x',
+    }
+
+    await slackService.addReaction(icon[review.state], message?.ts)
+
+    return false
+  }
+
+  async createdPullRequest({
+    comment,
+    slackService,
+    number,
+    user,
+    created_at,
+    url,
+  }: PayloadAction) {
     let message = ''
+
+    const messageFound = in_memory_database.getMessageByPullRequestUrl(url)
+
+    if (number) message += `Número do Pedido: ${number}\n`
 
     if (comment) {
       message += `💭 Um comentário foi adicionado a uma PizzaRequest!\n`
@@ -68,41 +139,77 @@ export class PizzaioloService {
       message += `Usuário que comentou: ${comment.user.login}\n`
     }
 
-    return message
+    message += `Data do Pedido: ${created_at}\n`
+    message += `Usuário: ${user.login}\n`
+    message += `URL: ${url}`
+
+    const response = await slackService.sendMessage(message, messageFound?.ts)
+
+    logger.info(JSON.stringify(response))
   }
 
-  resolvedPUllRequest({ thread }: { thread: ThreadResolved }) {
+  async resolvedPUllRequest({
+    thread,
+    number,
+    slackService,
+    user,
+    created_at,
+    url,
+  }: PayloadAction) {
     let message = ''
+
+    if (number) message += `Número do Pedido: ${number}\n`
 
     message += `✅ Uma thread foi resolvida!\n`
 
-    if (!thread) return message
+    if (thread) {
+      message += `URL: ${thread.comments[0].url}\n`
+    }
 
-    message += `URL: ${thread.comments[0].url}\n`
+    message += `Data do Pedido: ${created_at}\n`
+    message += `Usuário: ${user.login}\n`
+    message += `URL: ${url}`
 
-    return message
+    const response = await slackService.sendMessage(message)
+
+    logger.info(JSON.stringify(response))
   }
 
-  unresolvedPullRequest({ thread }: { thread: ThreadUnresolved }) {
+  async unresolvedPullRequest({
+    thread,
+    number,
+    slackService,
+    user,
+    created_at,
+    url,
+  }: PayloadAction) {
     let message = ''
+
+    if (number) message += `Número do Pedido: ${number}\n`
 
     message += `👉 Uma thread foi marcada como aberta!\n`
 
-    if (!thread) return message
+    if (thread) message += `URL: ${thread.comments[0].url}\n`
 
-    message += `URL: ${thread.comments[0].url}\n`
+    message += `Data do Pedido: ${created_at}\n`
+    message += `Usuário: ${user.login}\n`
+    message += `URL: ${url}`
 
-    return message
+    const response = await slackService.sendMessage(message)
+
+    logger.info(JSON.stringify(response))
   }
 
-  getMessage(payload: Payload) {
+  async executeActions({
+    payload,
+    slackService,
+  }: {
+    payload: Payload
+    slackService: SlackService
+  }) {
     // TODO: voltar aqui
     const { action, number, pull_request, review, comment, thread } =
       payload as any
-
-    let message = ``
-
-    if (number) message += `Número do Pedido: ${number}\n`
 
     const { user, url, created_at, merged, draft } = pull_request as PullRequest
 
@@ -119,18 +226,17 @@ export class PizzaioloService {
       converted_to_draft: this.closedPullRequest,
     }
 
-    message += availableActions[action]({
+    await availableActions[action]({
       merged,
       review,
       comment,
       thread,
       draft,
+      slackService,
+      user,
+      url,
+      created_at,
+      number,
     })
-
-    message += `Data do Pedido: ${created_at}\n`
-    message += `Usuário: ${user.login}\n`
-    message += `URL: ${url}`
-
-    return message
   }
 }
