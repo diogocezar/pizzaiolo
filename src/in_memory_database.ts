@@ -8,7 +8,6 @@ class DataBase {
   }
 
   addMessage(message: MessageData) {
-    console.log(message)
     this.slackMessages.push(message)
   }
 
@@ -25,8 +24,6 @@ class DataBase {
   }
 
   getMessageByPullRequestUrl(pullRequestUrl: string): MessageData {
-    console.log(pullRequestUrl)
-    console.log(this.slackMessages)
     return this.slackMessages.find(
       (message) => message.pullRequestUrl === pullRequestUrl
     )
