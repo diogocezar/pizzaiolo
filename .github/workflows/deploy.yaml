@@ -13,6 +13,8 @@ jobs:
           cd /home/ubuntu/www/pizzaiolo
           echo "Atualizando o repositório"
           git pull origin main
+          echo "Instalando novas dependências"
+          git yarn
           echo "Compilando o projeto"
           yarn build
           echo "Reiniciando o PM2"
