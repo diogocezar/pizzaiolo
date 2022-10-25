@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable } from '@nestjs/common'
-import * as axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 
 @Injectable()
 export class SlackService {
   api: string
-  client: axios.Axios
+  client: AxiosInstance
 
   constructor() {
     this.api = 'https://slack.com/api'
@@ -13,7 +12,6 @@ export class SlackService {
   }
 
   instanceClient() {
-    // @ts-ignore
     return axios.create({
       baseURL: this.api,
       timeout: 1000,
