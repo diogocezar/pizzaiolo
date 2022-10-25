@@ -5,6 +5,8 @@
   Pizzaiolo
 </h1>
 
+[![codecov](https://codecov.io/gh/diogocezar/pizzaiolo/branch/main/graph/badge.svg?token=3HPPS10BMP)](https://codecov.io/gh/diogocezar/pizzaiolo)
+
 ## Sumário
 
 - [Sumário](#sumário)
