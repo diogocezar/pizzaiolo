@@ -1,13 +1,19 @@
 -- CreateTable
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "email" TEXT NOT NULL,
-    "name" TEXT NOT NULL
+    "email" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "PullRequest" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+);
+
+-- CreateTable
+CREATE TABLE "Message" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "pull_request_id" INTEGER NOT NULL,
+    CONSTRAINT "Message_pull_request_id_fkey" FOREIGN KEY ("pull_request_id") REFERENCES "PullRequest" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

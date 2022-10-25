@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { Comment, CommentPayload } from 'src/types/comment'
+import { Comment, CommentPayload, User } from 'src/types/comment'
 import { Review, ReviewPayload } from 'src/types/review'
-import { PullRequest, PullRequestPayload, User } from 'src/types/pull_request'
+import { PullRequest, PullRequestPayload } from 'src/types/pull_request'
 import {
   CommentResolvedPayload,
   Thread as ThreadResolved,
@@ -14,6 +14,7 @@ import { SlackService } from 'src/slack/slack.service'
 import logger from 'src/logger'
 import in_memory_database from 'src/in_memory_database'
 import { formatMessageInfos } from 'src/helpers/messageFormater'
+import { PrismaService } from 'src/utils/prisma.service'
 
 type Payload =
   | PullRequestPayload
@@ -37,6 +38,8 @@ interface PayloadAction {
 
 @Injectable()
 export class PizzaioloService {
+  constructor(private prisma: PrismaService) {}
+
   validatePayload(payload: any): boolean {
     const { action } = payload
 
@@ -203,6 +206,33 @@ export class PizzaioloService {
       html_url,
       created_at,
       number,
+    })
+
+    this.prisma.events.create({
+      data: {
+        type: action,
+        pullRequest: {
+          connectOrCreate: {
+            where: {
+              id: pull_request.id,
+            },
+            create: {
+              id: pull_request.id,
+            },
+          },
+        },
+        user: {
+          connectOrCreate: {
+            where: {
+              id: user.id,
+            },
+            create: {
+              email: user.login,
+              id: user.id,
+            },
+          },
+        },
+      },
     })
   }
 }

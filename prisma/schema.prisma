@@ -8,15 +8,23 @@ datasource db {
 }
 
 model User {
-  id     Int      @id @default(autoincrement())
+  id     Int      @id
   email  String   @unique
-  name   String
   Events Events[]
 }
 
 model PullRequest {
-  id     Int      @id @default(autoincrement())
-  Events Events[]
+  id      Int       @id
+  url     String    @unique
+  Events  Events[]
+  Message Message[]
+}
+
+model Message {
+  id            Int @id
+  pullRequestId Int @map("pull_request_id")
+
+  pullRequest PullRequest @relation(fields: [pullRequestId], references: [id])
 }
 
 model Events {
