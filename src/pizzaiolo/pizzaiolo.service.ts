@@ -61,7 +61,7 @@ export class PizzaioloService {
   }: PayloadAction) {
     let message = ''
 
-    message += `🍕 Mama Mia! Que código bonito! 🍕\n`
+    message += `🤌 Mama Mia! Que código bonito! 🤌\n`
     message += formatMessageInfos(created_at, user.login, html_url)
 
     const response = await slackService.sendMessage(message)
@@ -72,8 +72,8 @@ export class PizzaioloService {
   }
 
   async closedPullRequest({ slackService, html_url }: PayloadAction) {
-    const message = in_memory_database.getMessageByPullRequestUrl(html_url)
-    await slackService.addReaction('checkered_flag', message?.ts)
+    const messageFound = in_memory_database.getMessageByPullRequestUrl(html_url)
+    await slackService.addReaction('pinched_fingers', messageFound?.ts)
   }
 
   async submittedPullRequest({
@@ -81,7 +81,7 @@ export class PizzaioloService {
     slackService,
     html_url,
   }: PayloadAction) {
-    const message = in_memory_database.getMessageByPullRequestUrl(html_url)
+    const messageFound = in_memory_database.getMessageByPullRequestUrl(html_url)
 
     const icon = {
       commented: 'speech_balloon',
@@ -89,7 +89,7 @@ export class PizzaioloService {
       changes_requested: 'x',
     }
 
-    await slackService.addReaction(icon[review.state], message?.ts)
+    await slackService.addReaction(icon[review.state], messageFound?.ts)
 
     return false
   }
@@ -119,15 +119,12 @@ export class PizzaioloService {
 
   async resolvedPUllRequest({
     thread,
-    number,
     slackService,
     user,
     created_at,
     html_url,
   }: PayloadAction) {
     let message = ''
-
-    if (number) message += `Número do Pedido: ${number}\n`
 
     message += `✅ Uma thread foi resolvida!\n`
 
@@ -144,16 +141,12 @@ export class PizzaioloService {
 
   async unresolvedPullRequest({
     thread,
-    number,
     slackService,
     user,
     created_at,
     html_url,
   }: PayloadAction) {
     let message = ''
-
-    if (number) message += `Número do Pedido: ${number}\n`
-
     message += `👉 Uma thread foi marcada como aberta!\n`
 
     if (thread) message += `URL: ${thread.comments[0].html_url}\n`
