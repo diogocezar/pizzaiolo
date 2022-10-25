@@ -5,40 +5,52 @@
   Pizzaiolo
 </h1>
 
-## Sumário
+- [👉 What is this?](#-what-is-this)
+- [🤌 Why?](#-why)
+- [💻 Pre-requisites](#-pre-requisites)
+- [☕️ Configuration](#️-configuration)
+- [🚀 Installation](#-installation)
+- [📫 Contributtins](#-contributtins)
+- [🤝 Colaborators](#-colaborators)
 
-- [Sumário](#sumário)
-- [👉 O que é?](#-o-que-é)
-- [💻 Pré-requisitos](#-pré-requisitos)
-- [🚀 Instalação](#-instalação)
-- [☕ Configurando Pizzaiolo](#-configurando-pizzaiolo)
-- [📫 Contribuindo para o Pizzaiolo](#-contribuindo-para-o-pizzaiolo)
-- [🤝 Colaboradores](#-colaboradores)
-- [😄 Seja um dos contribuidores<br>](#-seja-um-dos-contribuidores)
+## 👉 What is this?
 
-## 👉 O que é?
+This project is a simple **SlackBot** that integrates with **GitHub**.
 
-Este é um projeto Open Source para integrar o Slack ao Github.
+Every time that a PULL REQUEST is created, updated, finished, commented or approved, this boot will send a message in a Slack Channel.
 
-Seu propósito é bastante simples:
+## 🤌 Why?
 
-Sempe que houver alguma ação de Pull Request em uma organização ou repositório, um alerta em um canal do slack deve ser enviado.
+In our team we work with a code-review step.
 
-Isso ajuda os Desenvolvedores a manterem uma cultura de revisão constante de códigos.
+In this moment, when a developer finish the code, it's necessary that another one review it.
 
-## 💻 Pré-requisitos
+But, how to mantain all PRs and their respectives status stored in one place?
 
-Antes de começar, verifique se você atendeu aos seguintes requisitos:
+Thats is Pizzaiolo!
 
-- Uma conta ativa no slack e a permissão para a criação de um bot;
-- Uma conta ativa no GitHub e a permissão para criar webhooks;
-- Um lugar para hospedar o bot;
-- NodeJS;
-- Yarn;
+<p align="center">
+  <img src="./assets/images/pizzaiolo_sample.png" alt="Sample Pizzaiolo">
+</p>
 
-## 🚀 Instalação
+## 💻 Pre-requisites
 
-Para instalar o Pizzaiolo, siga estas etapas:
+You will need:
+
+- An account with admin role in Slack;
+- An account with admin role in GitHub;
+- A place to host this bot;
+
+## ☕️ Configuration
+
+Before the instalation, please you will need to configure:
+
+- [Slack](docs/SLACK_CONFIG.md)
+- [GitHub](docs/GITHUB_CONFIG.md)
+
+## 🚀 Installation
+
+To install this bot, you need to follow these steps:
 
 ```
 git clone git@github.com:diogocezar/pizzaiolo.git
@@ -47,21 +59,13 @@ yarn build
 yarn start
 ```
 
-## ☕ Configurando Pizzaiolo
+## 📫 Contributtins
 
-TBD
+Please take a look on the [contributing](docs/CONTRIBUTING.md) session.
 
-Você também precisará configurar o Slack. E pode encontrar a documentação para isso [aqui](https://github.com/diogocezar/pizzaiolo/blob/main/SLACK_CONFIG.md)
+## 🤝 Colaborators
 
-## 📫 Contribuindo para o Pizzaiolo
-
-Veja a seção de [contribuição](CONTRIBUTING.md).
-
-Como alternativa, consulte a documentação do GitHub em [como criar uma solicitação pull](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
-
-## 🤝 Colaboradores
-
-Agradecemos às seguintes pessoas que contribuíram para este projeto:
+So many pizzas to:
 
 <table>
   <tr>
@@ -81,11 +85,14 @@ Agradecemos às seguintes pessoas que contribuíram para este projeto:
         </sub>
       </a>
     </td>
+    </td>
+        <td align="center">
+      <a href="https://github.com/Jott4">
+        <img src="https://github.com/Jott4.png" width="100px;" alt="Foto do J"/><br>
+        <sub>
+          <b>João Victor</b>
+        </sub>
+      </a>
+    </td>
   </tr>
 </table>
-
-## 😄 Seja um dos contribuidores<br>
-
-Quer fazer parte desse projeto? Clique [AQUI](CONTRIBUTING.md) e leia como contribuir.
-
-[⬆ Voltar ao topo](#pizzaiolo)<br>
