@@ -38,7 +38,7 @@ Thats is Pizzaiolo!
 You will need:
 
 - An account with admin role in Slack;
-- An account with admin role in GitHuv;
+- An account with admin role in GitHub;
 - A place to host this bot;
 
 ## ☕️ Configuration
