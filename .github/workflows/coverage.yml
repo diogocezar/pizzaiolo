@@ -21,7 +21,7 @@ jobs:
         run: yarn
 
       - name: Run the tests
-        run: yarn test:coverage
+        run: yarn test:cov
 
       - uses: codecov/codecov-action@v2
         with:
