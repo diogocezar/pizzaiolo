@@ -22,7 +22,7 @@ Then, click in create.
 
 In **Install your app** click in the button with the label "Install to Workspace".
 
-![Installing Workspace](./assets/images/install_workspace.png)
+![Installing Workspace](../assets/images/install_workspace.png)
 
 After this, do this:
 
