@@ -72,7 +72,7 @@ export class PizzaioloService {
       url: html_url,
     })
 
-    logger.info(JSON.stringify(response))
+    logger.info(response)
   }
 
   async closedPullRequest({ slackService, html_url }: PayloadAction) {
@@ -112,7 +112,7 @@ export class PizzaioloService {
 
     const response = await slackService.sendMessage(message, messageTimeStamp)
 
-    logger.info(JSON.stringify(response))
+    logger.info(response)
   }
 
   async resolvedPullRequest({
@@ -132,9 +132,11 @@ export class PizzaioloService {
 
     message += formatMessageInfos(created_at, user.login, html_url)
 
-    const response = await slackService.sendMessage(message)
+    const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
 
-    logger.info(JSON.stringify(response))
+    const response = await slackService.sendMessage(message, messageTimeStamp)
+
+    logger.info(response)
   }
 
   async unresolvedPullRequest({
@@ -151,9 +153,11 @@ export class PizzaioloService {
 
     message += formatMessageInfos(created_at, user.login, html_url)
 
-    const response = await slackService.sendMessage(message)
+    const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
 
-    logger.info(JSON.stringify(response))
+    const response = await slackService.sendMessage(message, messageTimeStamp)
+
+    logger.info(response)
   }
 
   async saveMessage({
@@ -194,7 +198,7 @@ export class PizzaioloService {
   }): Promise<void> {
     const connectOrCreate = {
       data: {
-        type: action,
+        action,
         pullRequest: {
           connectOrCreate: {
             where: {
@@ -202,7 +206,7 @@ export class PizzaioloService {
             },
             create: {
               id: pull_request.id,
-              url: pull_request.url,
+              url: pull_request.html_url,
             },
           },
         },
@@ -237,7 +241,7 @@ export class PizzaioloService {
         pullRequest: true,
       },
     })
-    if (message && message.ts) return message.ts
+    if (message?.ts) return message.ts
     return null
   }
 
