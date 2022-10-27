@@ -24,22 +24,20 @@ export class SlackService {
   }
 
   async sendMessage(message: string, thread_ts?: string): Promise<any> {
-    const { data } = await this.client.post('/chat.postMessage', {
-      channel: process.env.SLACK_CHANNEL,
-      text: message,
-      ...(thread_ts && { thread_ts }),
-    })
-
-    return data
+    // const { data } = await this.client.post('/chat.postMessage', {
+    //   channel: process.env.SLACK_CHANNEL,
+    //   text: message,
+    //   ...(thread_ts && { thread_ts }),
+    // })
+    //return data
   }
 
   async addReaction(reaction: string, timestamp: string): Promise<void> {
-    if (!timestamp) return
-
-    await this.client.post('/reactions.add', {
-      channel: process.env.SLACK_CHANNEL,
-      name: reaction,
-      timestamp,
-    })
+    // if (!timestamp) return
+    // await this.client.post('/reactions.add', {
+    //   channel: process.env.SLACK_CHANNEL,
+    //   name: reaction,
+    //   timestamp,
+    // })
   }
 }

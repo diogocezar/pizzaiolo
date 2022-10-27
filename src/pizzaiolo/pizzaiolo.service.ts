@@ -158,8 +158,7 @@ export class PizzaioloService {
     pull_request: PullRequest
     user: User
   }): Promise<void> {
-    console.log(action, pull_request, user)
-    this.prismaService.events.create({
+    const connectOrCreate = {
       data: {
         type: action,
         pullRequest: {
@@ -185,7 +184,8 @@ export class PizzaioloService {
           },
         },
       },
-    })
+    }
+    this.prismaService.events.create(connectOrCreate)
   }
 
   async findMessageTimeStamp({
