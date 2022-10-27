@@ -1,33 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { Comment, CommentPayload, User } from 'src/types/comment'
-import { Review, ReviewPayload } from 'src/types/review'
-import { PullRequest, PullRequestPayload } from 'src/types/pull_request'
-import {
-  CommentResolvedPayload,
-  Thread as ThreadResolved,
-} from 'src/types/comment_resolved'
-import {
-  CommentUnresolvedPayload,
-  Thread as ThreadUnresolved,
-} from 'src/types/comment_unresolved'
+
+import { Review } from 'src/types/review'
+import { PullRequestPayload } from 'src/types/pull_request'
+
 import { SlackService } from 'src/slack/slack.service'
 import logger from 'src/logger'
 import in_memory_database from 'src/in_memory_database'
 import { formatMessageInfos } from 'src/helpers/messageFormater'
 import { PrismaService } from 'src/utils/prisma.service'
-
-type Payload =
-  | PullRequestPayload
-  | CommentPayload
-  | CommentResolvedPayload
-  | CommentUnresolvedPayload
-  | ReviewPayload
+import { User } from '@/types/base/user'
+import { Thread } from '@/types/base/thread'
+import { Comment } from '@/types/base/coment'
 
 interface PayloadAction {
   merged: boolean
   review: Review
   comment: Comment
-  thread: ThreadResolved | ThreadUnresolved
+  thread: Thread
   draft: boolean
   slackService: SlackService
   user: User
@@ -165,15 +154,12 @@ export class PizzaioloService {
     payload,
     slackService,
   }: {
-    payload: Payload
+    payload: PullRequestPayload
     slackService: SlackService
   }) {
-    // TODO: voltar aqui
-    const { action, number, pull_request, review, comment, thread } =
-      payload as any
+    const { action, pull_request } = payload
 
-    const { user, html_url, created_at, merged, draft } =
-      pull_request as PullRequest
+    const { user, html_url, created_at, merged, draft } = pull_request
 
     // The PullRequest was opened, but it's a draft, then we don't need to send a message for review
     if (draft && action === 'opened') return
@@ -190,15 +176,12 @@ export class PizzaioloService {
 
     await availableActions[action]({
       merged,
-      review,
-      comment,
-      thread,
       draft,
       slackService,
       user,
       html_url,
       created_at,
-      number,
+      ...payload,
     })
 
     this.prisma.events.create({
@@ -211,6 +194,7 @@ export class PizzaioloService {
             },
             create: {
               id: pull_request.id,
+              url: pull_request.url,
             },
           },
         },
