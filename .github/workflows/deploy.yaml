@@ -13,7 +13,6 @@ jobs:
           git reset --hard HEAD
           git pull origin main
           yarn
-          yarn prisma:deploy
           yarn prisma:generate
           yarn build
           pm2 restart pizzaiolo
