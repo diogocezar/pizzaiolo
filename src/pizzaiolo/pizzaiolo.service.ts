@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { Review } from 'src/types/review'
+import { Review, ReviewPayload } from 'src/types/review'
 import { PullRequestPayload } from 'src/types/pull_request'
 
 import { SlackService } from 'src/slack/slack.service'
@@ -8,9 +8,11 @@ import logger from 'src/logger'
 import in_memory_database from 'src/in_memory_database'
 import { formatMessageInfos } from 'src/helpers/messageFormater'
 import { PrismaService } from 'src/utils/prisma.service'
-import { User } from '@/types/base/user'
-import { Thread } from '@/types/base/thread'
-import { Comment } from '@/types/base/coment'
+import { Thread } from 'src/types/base/thread'
+import { CommentPayload } from 'src/types/comment'
+import { User } from 'src/types/base/user'
+import { Comment } from 'src/types/base/coment'
+import { Payload } from 'src/types/payload'
 
 interface PayloadAction {
   merged: boolean
@@ -154,7 +156,7 @@ export class PizzaioloService {
     payload,
     slackService,
   }: {
-    payload: PullRequestPayload
+    payload: Payload
     slackService: SlackService
   }) {
     const { action, pull_request } = payload
