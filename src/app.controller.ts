@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Payload } from 'src/types/payload'
 import { AppService } from './app.service'
 
 @Controller()
@@ -12,7 +13,7 @@ export class AppController {
 
   @Post('/webhook')
   // TODO: Implements where auth with GitHub secret
-  webhook(@Body() payload: any): Promise<boolean> {
+  webhook(@Body() payload: Payload): Promise<boolean> {
     return this.appService.sendMessage(payload)
   }
 }

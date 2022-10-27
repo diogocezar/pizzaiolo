@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { Review } from 'src/types/review'
+import { Review, ReviewPayload } from 'src/types/review'
 import { PullRequestPayload } from 'src/types/pull_request'
 
 import { SlackService } from 'src/slack/slack.service'

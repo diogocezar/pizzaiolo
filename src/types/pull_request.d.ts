@@ -1,6 +1,4 @@
-import { PullRequest } from '@/types/base/pull-request'
-import { Repository } from '@/types/base/repository'
-import { User } from '@/types/base/user'
+import { BasePullRequest } from 'src/types/base/base_pull_request'
 
 export interface PullRequestPayload {
   action: string
