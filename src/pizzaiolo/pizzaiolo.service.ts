@@ -87,7 +87,15 @@ export class PizzaioloService {
   }: PayloadAction) {
     const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
 
-    await slackService.addReaction(icons[review.state], messageTimeStamp)
+    if (review.state === 'approved') {
+      const count = this.findSubmittedPullRequest({ html_url })
+      await slackService.addReaction(
+        icons[`approved_${count}`],
+        messageTimeStamp
+      )
+    } else {
+      await slackService.addReaction(icons[review.state], messageTimeStamp)
+    }
 
     return false
   }
@@ -224,6 +232,17 @@ export class PizzaioloService {
       },
     }
     await this.prismaService.events.create(connectOrCreate)
+  }
+
+  async findSubmittedPullRequest({
+    html_url,
+  }: {
+    html_url: string
+  }): Promise<number> {
+    const count: number = await this.prismaService.events.count({
+      where: { action: 'submitted', pullRequest: { url: html_url } },
+    })
+    return count
   }
 
   async findMessageTimeStamp({
