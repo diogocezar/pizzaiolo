@@ -11,6 +11,7 @@ export class AppController {
   }
 
   @Post('/webhook')
+  // TODO: Implements where auth with GitHub secret
   webhook(@Body() payload: any): Promise<boolean> {
     return this.appService.sendMessage(payload)
   }
