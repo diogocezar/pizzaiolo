@@ -21,8 +21,9 @@ model PullRequest {
 }
 
 model Message {
-  id            Int @id
-  pullRequestId Int @map("pull_request_id")
+  id            Int    @id
+  ts            String
+  pullRequestId Int    @map("pull_request_id")
 
   pullRequest PullRequest @relation(fields: [pullRequestId], references: [id])
 }

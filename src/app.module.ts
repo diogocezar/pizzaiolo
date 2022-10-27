@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config'
 import { SlackModule } from 'nestjs-slack'
 import { SlackService } from './slack/slack.service'
 import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
+import { PrismaService } from './shared/prisma.service'
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, SlackService, PizzaioloService],
+  providers: [AppService, SlackService, PizzaioloService, PrismaService],
 })
 export class AppModule {}

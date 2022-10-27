@@ -1,6 +1,8 @@
 import { format, parseISO } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
 
+import { Comment } from 'src/types/base/coment'
+
 export const formatMessageInfos = (
   created_at: any,
   login: string,
@@ -14,4 +16,12 @@ export const formatMessageInfos = (
   str += `*Pizzaiolo*: ${login}\n`
   str += `*Veja essa beleza*: ${html_url}`
   return str
+}
+
+export const formatComment = (comment: Comment) => {
+  return `O *${comment.user.login}* falou: ${comment.body}\n`
+}
+
+export const formatUrl = (url: string) => {
+  return `URL: ${url}\n`
 }

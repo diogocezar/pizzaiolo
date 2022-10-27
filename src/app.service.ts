@@ -1,4 +1,4 @@
-import { CommentPayload } from '@/types/comment'
+import { CommentPayload } from 'src/types/comment'
 import { Injectable } from '@nestjs/common'
 import { PullRequestPayload } from 'src/types/pull_request'
 import { ReviewPayload } from 'src/types/review'

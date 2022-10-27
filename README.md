@@ -4,7 +4,6 @@
 <h1 align="center">
   Pizzaiolo
 </h1>
-
 - [👉 What is this?](#-what-is-this)
 - [🤌 Why?](#-why)
 - [💻 Pre-requisites](#-pre-requisites)

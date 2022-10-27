@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core'
-import Logger from 'src/logger'
+import Logger from 'src/shared/logger'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
