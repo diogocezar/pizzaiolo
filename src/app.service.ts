@@ -1,11 +1,7 @@
-import { CommentPayload } from '@/types/comment'
 import { Injectable } from '@nestjs/common'
-import { PullRequestPayload } from 'src/types/pull_request'
-import { ReviewPayload } from 'src/types/review'
+import { Payload } from 'src/types/payload'
 import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
 import { SlackService } from './slack/slack.service'
-
-type Payload = PullRequestPayload | CommentPayload | ReviewPayload
 
 @Injectable()
 export class AppService {

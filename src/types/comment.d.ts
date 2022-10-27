@@ -1,13 +1,8 @@
 import { Organization } from '@/types/base/oganization'
 import { Thread } from '@/types/base/thread'
-import { User } from '@/types/base/user'
-import { PullRequest, Repository } from '@/types/comment'
+import { BasePullRequest } from 'src/types/base/base_pull_request'
 
-export interface CommentPayload {
-  action: string
-  pull_request: PullRequest
+export interface CommentPayload extends BasePullRequest {
   thread: Thread
-  repository: Repository
   organization: Organization
-  sender: User
 }

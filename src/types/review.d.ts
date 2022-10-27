@@ -2,6 +2,7 @@ import { Links } from '@/types/base/links'
 import { PullRequest } from '@/types/base/pull-request'
 import { Repository } from '@/types/base/repository'
 import { User } from '@/types/base/user'
+import { BasePullRequest } from 'src/types/base/base_pull_request'
 
 export interface Review {
   id: number
@@ -17,10 +18,6 @@ export interface Review {
   _links: Links
 }
 
-export interface ReviewPayload {
-  action: string
+export interface ReviewPayload extends BasePullRequest {
   review: Review
-  pull_request: PullRequest
-  repository: Repository
-  sender: User
 }
