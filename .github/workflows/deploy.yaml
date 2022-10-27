@@ -14,5 +14,6 @@ jobs:
           git pull origin main
           yarn
           yarn prisma:generate
+          yarn prisma:push
           yarn build
           pm2 restart pizzaiolo
