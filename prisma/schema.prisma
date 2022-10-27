@@ -8,30 +8,38 @@ datasource db {
 }
 
 model User {
-  id     Int      @id
-  email  String   @unique
-  Events Events[]
+  id        Int      @id
+  email     String   @unique
+  Events    Events[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PullRequest {
-  id      Int       @id
-  url     String    @unique
-  Events  Events[]
-  Message Message[]
+  id        Int       @id
+  url       String    @unique
+  Events    Events[]
+  Message   Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Message {
-  id            Int @id
-  pullRequestId Int @map("pull_request_id")
-
-  pullRequest PullRequest @relation(fields: [pullRequestId], references: [id])
+  id            Int         @id @default(autoincrement())
+  ts            String
+  pullRequestId Int         @map("pull_request_id")
+  pullRequest   PullRequest @relation(fields: [pullRequestId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Events {
   id            Int         @id @default(autoincrement())
-  type          String
+  action        String
   user          User        @relation(fields: [userId], references: [id])
   userId        Int         @map("user_id")
   pullRequest   PullRequest @relation(fields: [pullRequestId], references: [id])
   pullRequestId Int         @map("pull_request_id")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }

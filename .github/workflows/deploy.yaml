@@ -10,6 +10,7 @@ jobs:
     steps:
       - run: |
           cd /home/ubuntu/www/pizzaiolo
+          git reset --hard HEAD
           git pull origin main
           yarn
           yarn build
