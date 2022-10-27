@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { Review, ReviewPayload } from 'src/types/review'
+import { Review } from 'src/types/review'
 import { PullRequestPayload } from 'src/types/pull_request'
 
 import { SlackService } from 'src/slack/slack.service'
@@ -14,22 +14,22 @@ import { PrismaService } from 'src/shared/prisma.service'
 import { User } from 'src/types/base/user'
 import { Thread } from 'src/types/base/thread'
 import { Comment } from 'src/types/base/coment'
-import { PullRequest } from '@prisma/client'
+import { PullRequest } from 'src/types/base/pull-request'
 
 import { icons } from 'src/shared/icons'
 import { messages } from 'src/shared/messages'
 
 interface PayloadAction {
   merged: boolean
-  review: Review
-  comment: Comment
-  thread: Thread
+  review?: Review
+  comment?: Comment
+  thread?: Thread
   draft: boolean
   slackService: SlackService
   user: User
   html_url: string
+  pull_request: PullRequest
   created_at: Date
-  number: number
 }
 
 @Injectable()
@@ -57,6 +57,7 @@ export class PizzaioloService {
     user,
     created_at,
     html_url,
+    pull_request,
   }: PayloadAction) {
     let message = ''
 
@@ -64,6 +65,12 @@ export class PizzaioloService {
     message += formatMessageInfos(created_at, user.login, html_url)
 
     const response = await slackService.sendMessage(message)
+
+    await this.saveMessage({
+      pull_request,
+      timestamp: response.ts,
+      url: html_url,
+    })
 
     logger.info(JSON.stringify(response))
   }
@@ -149,6 +156,33 @@ export class PizzaioloService {
     logger.info(JSON.stringify(response))
   }
 
+  async saveMessage({
+    timestamp,
+    pull_request,
+    url,
+  }: {
+    timestamp: string
+    pull_request: PullRequest
+    url: string
+  }): Promise<void> {
+    await this.prismaService.message.create({
+      data: {
+        ts: timestamp,
+        pullRequest: {
+          connectOrCreate: {
+            where: {
+              id: pull_request.id,
+            },
+            create: {
+              id: pull_request.id,
+              url: url,
+            },
+          },
+        },
+      },
+    })
+  }
+
   async saveOnDatabase({
     action,
     pull_request,
@@ -185,7 +219,7 @@ export class PizzaioloService {
         },
       },
     }
-    this.prismaService.events.create(connectOrCreate)
+    await this.prismaService.events.create(connectOrCreate)
   }
 
   async findMessageTimeStamp({
@@ -193,7 +227,7 @@ export class PizzaioloService {
   }: {
     html_url: string
   }): Promise<string | null> {
-    const message = await this.prismaService.message.findFirstOrThrow({
+    const message = await this.prismaService.message.findFirst({
       where: {
         pullRequest: {
           url: html_url,
@@ -203,7 +237,7 @@ export class PizzaioloService {
         pullRequest: true,
       },
     })
-    if (message.ts) return message.ts
+    if (message && message.ts) return message.ts
     return null
   }
 
@@ -220,26 +254,41 @@ export class PizzaioloService {
 
     if (draft && action === 'opened') return
 
-    const availableActions = {
-      opened: this.openedPullRequest,
-      closed: this.closedPullRequest,
-      submitted: this.submittedPullRequest,
-      created: this.createdPullRequest,
-      resolved: this.resolvedPullRequest,
-      unresolved: this.unresolvedPullRequest,
-      converted_to_draft: this.closedPullRequest,
-    }
-
-    await availableActions[action]({
+    // We need to keep this way because this context inside class
+    const payloadToSend: PayloadAction = {
       merged,
       draft,
       slackService,
       user,
       html_url,
+      pull_request,
       created_at,
       ...payload,
-    })
+    }
 
+    switch (action) {
+      case 'opened':
+        this.openedPullRequest(payloadToSend)
+        break
+      case 'closed':
+        this.closedPullRequest(payloadToSend)
+        break
+      case 'submitted':
+        this.submittedPullRequest(payloadToSend)
+        break
+      case 'created':
+        this.createdPullRequest(payloadToSend)
+        break
+      case 'resolved':
+        this.resolvedPullRequest(payloadToSend)
+        break
+      case 'unresolved':
+        this.unresolvedPullRequest(payloadToSend)
+        break
+      case 'converted_to_draft':
+        this.closedPullRequest(payloadToSend)
+        break
+    }
     await this.saveOnDatabase({ action, pull_request, user })
   }
 }

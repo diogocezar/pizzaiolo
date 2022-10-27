@@ -21,7 +21,7 @@ model PullRequest {
 }
 
 model Message {
-  id            Int    @id
+  id            Int    @id @default(autoincrement())
   ts            String
   pullRequestId Int    @map("pull_request_id")
 
