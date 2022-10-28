@@ -8,7 +8,8 @@ export class GithubWebHookGuard implements CanActivate {
     const req = context.switchToHttp().getRequest()
     if (req.readable) {
       const X_HUB_SIGNATURE = 'x-hub-signature'
-      const chunk = (await rawBody(req)).toString().trim()
+      const bodyFormatted = await rawBody(req)
+      const chunk = bodyFormatted.toString().trim()
       const headerSignature = req.headers[X_HUB_SIGNATURE]
       const signature = `sha1=${crypto
         .createHmac('sha1', process.env.GITHUB_WEBHOOK_SECRET)
