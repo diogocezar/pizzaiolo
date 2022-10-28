@@ -28,7 +28,7 @@ COPY --from=ts-compiler /usr/app/tsconfig.json ./
 COPY --from=ts-compiler /usr/app/prisma ./
 
 # Remove comment when test local
-# COPY --from=ts-compiler /usr/app/.env ./
+COPY --from=ts-compiler /usr/app/.env ./
 
 RUN yarn
 
@@ -52,6 +52,6 @@ WORKDIR /usr/app
 
 COPY --from=ts-remover /usr/app ./
 
-EXPOSE 3000
+EXPOSE 3000:3000
 
 CMD ["yarn", "run" ,"start:prod"]
