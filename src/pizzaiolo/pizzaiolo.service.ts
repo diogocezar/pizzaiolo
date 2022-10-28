@@ -89,13 +89,14 @@ export class PizzaioloService {
 
     if (review.state === 'approved') {
       const count = this.findSubmittedPullRequest({ html_url })
-      await slackService.addReaction(
+      
+      return slackService.addReaction(
         icons[`approved_${count}`],
         messageTimeStamp
       )
-    } else {
-      await slackService.addReaction(icons[review.state], messageTimeStamp)
-    }
+      }
+    
+      return slackService.addReaction(icons[review.state], messageTimeStamp)
 
     return false
   }
