@@ -10,9 +10,11 @@ RUN yarn
 
 COPY . ./
 
-RUN npx prisma generate
+RUN yarn prisma:generate
 
 RUN yarn run build
+
+RUN yarn prisma:push
 
 FROM node:16-bullseye as ts-remover
 
@@ -23,16 +25,16 @@ COPY --from=ts-compiler /usr/app/yarn.lock ./
 COPY --from=ts-compiler /usr/app/dist ./
 COPY --from=ts-compiler /usr/app/tsconfig.*.json ./
 COPY --from=ts-compiler /usr/app/tsconfig.json ./
+COPY --from=ts-compiler /usr/app/prisma ./
 
-# When implements the prisma client, uncomment this line
-#COPY --from=ts-compiler /usr/app/prisma ./
-
-# Run when test local
+# Remove comment when test local
 # COPY --from=ts-compiler /usr/app/.env ./
 
 RUN yarn
 
-RUN npx prisma generate
+RUN yarn prisma:generate
+
+RUN yarn prisma:push
 
 FROM node:16-bullseye
 
