@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { ConfigModule } from '@nestjs/config'
-import { SlackService } from './slack/slack.service'
-import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
-import { PrismaService } from './shared/prisma.service'
+import { SlackService } from 'src/slack/slack.service'
+import { PizzaioloService } from 'src/pizzaiolo/pizzaiolo.service'
+import { PrismaService } from 'src/common/database/prisma/prisma.service'
 
 @Module({
   imports: [ConfigModule.forRoot()],

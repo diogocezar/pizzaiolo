@@ -1,92 +1,58 @@
 import { Injectable } from '@nestjs/common'
-
-import { Review } from 'src/types/review'
-import { PullRequestPayload } from 'src/types/pull_request'
-
+import Logger from 'src/shared/logger'
+import { ICONS, MESSAGES } from 'src/common/constants'
+import { formatAttachment, convertDate } from 'src/common/utils/formater'
 import { SlackService } from 'src/slack/slack.service'
-import logger from 'src/shared/logger'
-import {
-  formatMessageInfos,
-  formatComment,
-  formatUrl,
-  convertDate,
-} from 'src/shared/messageFormater'
-import { PrismaService } from 'src/shared/prisma.service'
-import { User } from 'src/types/base/user'
-import { Thread } from 'src/types/base/thread'
-import { Comment } from 'src/types/base/coment'
-import { PullRequest } from 'src/types/base/pull-request'
-
-import { icons } from 'src/shared/icons'
-import { messages } from 'src/shared/messages'
-import { RequestInfos } from 'src/types/request.infos'
-
-interface PayloadAction {
-  title: string
-  merged: boolean
-  review?: Review
-  comment?: Comment
-  thread?: Thread
-  draft: boolean
-  slackService: SlackService
-  user: User
-  html_url: string
-  pull_request: PullRequest
-  created_at: Date
-}
+import { PizzaioloRepository } from './pizzaiolo.repository'
+import { PayloadAction } from 'src/common/interfaces/pizzaiolo/pizzaiolo.action'
+import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
 
 @Injectable()
 export class PizzaioloService {
-  constructor(private prismaService: PrismaService) {}
-
-  validatePayload(payload: any): boolean {
-    const { action } = payload
-
-    const validActions = [
-      'opened',
-      'closed',
-      'reopened',
-      'submitted',
-      'created',
-      'resolved',
-      'unresolved',
-    ]
-
-    return validActions.includes(action)
-  }
+  constructor(
+    private pizzaioloRepository: PizzaioloRepository,
+    private slackService: SlackService
+  ) {}
 
   async openedPullRequest({
-    slackService,
     user,
     title,
     created_at,
     html_url,
     pull_request,
   }: PayloadAction) {
-    let message = ''
+    try {
+      const text = MESSAGES.OPEN_PULL_REQUEST
 
-    message += messages.open_pull_request
+      const attachments = formatAttachment({
+        title,
+        date: convertDate(created_at),
+        user_name: user.login,
+        user_avatar: user.avatar_url,
+        url: html_url,
+      })
 
-    const requestInfos: RequestInfos = {
-      title,
-      pizzaioloAvatar: user.avatar_url,
-      url: html_url,
-      date: convertDate(created_at),
-      pizzaiolo: user.login,
+      const responseSlack = await this.slackService.sendMessage({
+        text,
+        timestamp: null,
+        attachments,
+      } as SlackMessage)
+
+      const responseBase = await this.pizzaioloRepository.saveMessage({
+        pull_request,
+        timestamp: responseSlack.ts,
+        url: html_url,
+      })
+
+      Logger.info({ slack: responseSlack, base: responseBase })
+    } catch (err) {
+      Logger.error(err)
     }
-
-    const response = await slackService.sendMessage(message, null, requestInfos)
-
-    await this.saveMessage({
-      pull_request,
-      timestamp: response.ts,
-      url: html_url,
-    })
-
-    logger.info(response)
   }
 
-  async closedPullRequest({ slackService, html_url }: PayloadAction) {
+  //TODO : Parei aqui
+
+  async closedPullRequest({ html_url }: PayloadAction) {
     const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
     await slackService.addReaction(icons['closed'], messageTimeStamp)
   }
@@ -210,102 +176,6 @@ export class PizzaioloService {
     )
 
     logger.info(response)
-  }
-
-  async saveMessage({
-    timestamp,
-    pull_request,
-    url,
-  }: {
-    timestamp: string
-    pull_request: PullRequest
-    url: string
-  }): Promise<void> {
-    await this.prismaService.message.create({
-      data: {
-        ts: timestamp,
-        pullRequest: {
-          connectOrCreate: {
-            where: {
-              id: pull_request.id,
-            },
-            create: {
-              id: pull_request.id,
-              url: url,
-            },
-          },
-        },
-      },
-    })
-  }
-
-  async saveOnDatabase({
-    action,
-    pull_request,
-    user,
-  }: {
-    action: string
-    pull_request: PullRequest
-    user: User
-  }): Promise<void> {
-    const connectOrCreate = {
-      data: {
-        action,
-        pullRequest: {
-          connectOrCreate: {
-            where: {
-              id: pull_request.id,
-            },
-            create: {
-              id: pull_request.id,
-              url: pull_request.html_url,
-            },
-          },
-        },
-        user: {
-          connectOrCreate: {
-            where: {
-              id: user.id,
-            },
-            create: {
-              email: user.login,
-              id: user.id,
-            },
-          },
-        },
-      },
-    }
-    await this.prismaService.events.create(connectOrCreate)
-  }
-
-  async findSubmittedPullRequest({
-    html_url,
-  }: {
-    html_url: string
-  }): Promise<number> {
-    const count: number = await this.prismaService.events.count({
-      where: { action: 'submitted', pullRequest: { url: html_url } },
-    })
-    return count
-  }
-
-  async findMessageTimeStamp({
-    html_url,
-  }: {
-    html_url: string
-  }): Promise<string | null> {
-    const message = await this.prismaService.message.findFirst({
-      where: {
-        pullRequest: {
-          url: html_url,
-        },
-      },
-      include: {
-        pullRequest: true,
-      },
-    })
-    if (message?.ts) return message.ts
-    return null
   }
 
   async executeActions({
