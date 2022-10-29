@@ -9,6 +9,7 @@ import {
   formatMessageInfos,
   formatComment,
   formatUrl,
+  convertDate,
 } from 'src/shared/messageFormater'
 import { PrismaService } from 'src/shared/prisma.service'
 import { User } from 'src/types/base/user'
@@ -18,8 +19,10 @@ import { PullRequest } from 'src/types/base/pull-request'
 
 import { icons } from 'src/shared/icons'
 import { messages } from 'src/shared/messages'
+import { RequestInfos } from 'src/types/request.infos'
 
 interface PayloadAction {
+  title: string
   merged: boolean
   review?: Review
   comment?: Comment
@@ -55,6 +58,7 @@ export class PizzaioloService {
   async openedPullRequest({
     slackService,
     user,
+    title,
     created_at,
     html_url,
     pull_request,
@@ -62,9 +66,16 @@ export class PizzaioloService {
     let message = ''
 
     message += messages.open_pull_request
-    message += formatMessageInfos(created_at, user.login, html_url)
 
-    const response = await slackService.sendMessage(message)
+    const requestInfos: RequestInfos = {
+      title,
+      pizzaioloAvatar: user.avatar_url,
+      url: html_url,
+      date: convertDate(created_at),
+      pizzaiolo: user.login,
+    }
+
+    const response = await slackService.sendMessage(message, null, requestInfos)
 
     await this.saveMessage({
       pull_request,
@@ -89,16 +100,14 @@ export class PizzaioloService {
 
     if (review.state === 'approved') {
       const count = this.findSubmittedPullRequest({ html_url })
-      
+
       return slackService.addReaction(
         icons[`approved_${count}`],
         messageTimeStamp
       )
-      }
-    
-      return slackService.addReaction(icons[review.state], messageTimeStamp)
+    }
 
-    return false
+    return slackService.addReaction(icons[review.state], messageTimeStamp)
   }
 
   async createdPullRequest({
@@ -117,9 +126,19 @@ export class PizzaioloService {
 
     const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
 
-    message += formatMessageInfos(created_at, user.login, html_url)
+    const requestInfos: RequestInfos = {
+      title: 'Uma nova atualização deste pedido!',
+      pizzaioloAvatar: user.avatar_url,
+      url: html_url,
+      date: convertDate(created_at),
+      pizzaiolo: user.login,
+    }
 
-    const response = await slackService.sendMessage(message, messageTimeStamp)
+    const response = await slackService.sendMessage(
+      message,
+      messageTimeStamp,
+      requestInfos
+    )
 
     logger.info(response)
   }
@@ -143,7 +162,19 @@ export class PizzaioloService {
 
     const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
 
-    const response = await slackService.sendMessage(message, messageTimeStamp)
+    const requestInfos: RequestInfos = {
+      title: 'Pizza entregue!',
+      pizzaioloAvatar: user.avatar_url,
+      url: html_url,
+      date: convertDate(created_at),
+      pizzaiolo: user.login,
+    }
+
+    const response = await slackService.sendMessage(
+      message,
+      messageTimeStamp,
+      requestInfos
+    )
 
     logger.info(response)
   }
@@ -164,7 +195,19 @@ export class PizzaioloService {
 
     const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
 
-    const response = await slackService.sendMessage(message, messageTimeStamp)
+    const requestInfos: RequestInfos = {
+      title: 'Eita, a pizza voltou!',
+      pizzaioloAvatar: user.avatar_url,
+      url: html_url,
+      date: convertDate(created_at),
+      pizzaiolo: user.login,
+    }
+
+    const response = await slackService.sendMessage(
+      message,
+      messageTimeStamp,
+      requestInfos
+    )
 
     logger.info(response)
   }
@@ -274,12 +317,13 @@ export class PizzaioloService {
   }) {
     const { action, pull_request } = payload
 
-    const { user, html_url, created_at, merged, draft } = pull_request
+    const { user, html_url, created_at, merged, draft, title } = pull_request
 
     if (draft && action === 'opened') return
 
     // We need to keep this way because this context inside class
     const payloadToSend: PayloadAction = {
+      title,
       merged,
       draft,
       slackService,
