@@ -10,4 +10,9 @@ export class AppController {
   webhook(@Body() payload: Payload): Promise<boolean> {
     return this.appService.sendMessage(payload)
   }
+
+  @Post('/command')
+  command(@Body() payload: any): Promise<string> {
+    return this.appService.command(payload)
+  }
 }
