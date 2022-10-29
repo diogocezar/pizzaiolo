@@ -8,6 +8,8 @@ import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
 
 import { ICONS, MESSAGES } from 'src/common/constants'
 import { PullRequestPayload } from 'src/common/interfaces/github/pull_request'
+import { ReviewState } from 'src/common/enums/reviewState.enum'
+import { LogType } from 'src/common/enums/logType.enum'
 
 @Injectable()
 export class PizzaioloService {
@@ -46,9 +48,13 @@ export class PizzaioloService {
         url: html_url,
       })
 
-      Logger.info({ slack: responseSlack, base: responseBase })
+      Logger.info({
+        type: LogType.OPENED_PULL_REQUEST,
+        slack: responseSlack,
+        base: responseBase,
+      })
     } catch (err) {
-      Logger.error(err)
+      Logger.error({ type: LogType.OPENED_PULL_REQUEST, error: err })
     }
   }
 
@@ -60,8 +66,12 @@ export class PizzaioloService {
         name: ICONS.CLOSED,
         timestamp: messageTimeStamp,
       })
+      Logger.info({
+        type: LogType.CLOSED_PULL_REQUEST,
+        messageTimeStamp,
+      })
     } catch (err) {
-      Logger.error(err)
+      Logger.error({ type: LogType.CLOSED_PULL_REQUEST, error: err })
     }
   }
 
@@ -71,8 +81,7 @@ export class PizzaioloService {
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
-      // TODO: refact to enum. e.g.: review.state === ReviewState.APPROVED
-      if (review.state === 'approved') {
+      if (review.state === ReviewState.APPROVED) {
         count = await this.pizzaioloRepository.findSubmittedPullRequest(
           html_url
         )
@@ -83,7 +92,7 @@ export class PizzaioloService {
         })
 
         Logger.info({
-          type: 'SUBMITTED_PULL_REQUEST',
+          type: LogType.SUBMITTED_PULL_REQUEST,
           messageTimeStamp,
           state: review.state,
           count: count,
@@ -98,12 +107,12 @@ export class PizzaioloService {
       })
 
       Logger.info({
-        type: 'SUBMITTED_PULL_REQUEST',
+        type: LogType.SUBMITTED_PULL_REQUEST,
         messageTimeStamp,
         state: review.state,
       })
     } catch (err) {
-      Logger.error(err)
+      Logger.error({ type: LogType.SUBMITTED_PULL_REQUEST, error: err })
     }
   }
 
@@ -131,9 +140,13 @@ export class PizzaioloService {
         attachments,
       } as SlackMessage)
 
-      Logger.info({ slack: responseSlack })
+      Logger.info({
+        type: LogType.CREATED_PULL_REQUEST,
+        slack: responseSlack,
+        messageTimeStamp,
+      })
     } catch (err) {
-      Logger.error(err)
+      Logger.error({ type: LogType.CREATED_PULL_REQUEST, error: err })
     }
   }
 
@@ -162,9 +175,14 @@ export class PizzaioloService {
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
-      Logger.info({ slack: responseSlack })
+
+      Logger.info({
+        type: LogType.RESOLVED_PULL_REQUEST,
+        slack: responseSlack,
+        messageTimeStamp,
+      })
     } catch (err) {
-      Logger.error(err)
+      Logger.error({ type: LogType.RESOLVED_PULL_REQUEST, error: err })
     }
   }
 
@@ -193,9 +211,14 @@ export class PizzaioloService {
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
-      Logger.info({ slack: responseSlack })
+
+      Logger.info({
+        type: LogType.UNRESOLVED_PULL_REQUEST,
+        slack: responseSlack,
+        messageTimeStamp,
+      })
     } catch (err) {
-      Logger.error(err)
+      Logger.error({ type: LogType.UNRESOLVED_PULL_REQUEST, error: err })
     }
   }
 
@@ -231,9 +254,6 @@ export class PizzaioloService {
         break
       case 'unresolved':
         this.unresolvedPullRequest(payloadToSend)
-        break
-      case 'converted_to_draft':
-        this.closedPullRequest(payloadToSend)
         break
     }
 
