@@ -59,6 +59,14 @@ yarn build
 yarn start
 ```
 
+## Docker
+
+**Official container** &nbsp; [![diogocezar/pizzaiolo](https://ghcr-badge.herokuapp.com/diogocezar/pizzaiolo/latest_tag)](https://hub.docker.com/r/diogocezar/pizzaiolo)
+
+```bash
+docker run --rm --name pizzaiolo -p 3000:3000 ghcr.io/diogocezar/pizzaiolo:latest
+```
+
 ## 📫 Contributtins
 
 Please take a look on the [contributing](docs/CONTRIBUTING.md) session.
