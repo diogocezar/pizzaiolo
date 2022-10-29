@@ -33,7 +33,7 @@ export const formatAttachment = ({
       title_link: url,
       author_icon: user_avatar,
       author_name: user_name,
-      footer: 'Não se esuqueça de dar uma olhada no pedido!',
+      footer: 'Não se esqueça de dar uma olhada no pedido!',
     },
     {
       title: 'Que tal dar uma olhada nessa PR?',
