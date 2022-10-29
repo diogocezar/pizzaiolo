@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SlackApi } from 'src/config/api/slack.api'
-import { SlackMessage } from 'src/common/interfaces/slack.message'
+import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
 import { SlackReaction } from 'src/common/interfaces/slack/slack.reaction'
 
 @Injectable()

@@ -6,19 +6,11 @@ import { payloadValidator } from 'src/common/validators/payload.validator'
 
 @Injectable()
 export class AppService {
-  constructor(
-    private pizzaioloService: PizzaioloService,
-    private slackService: SlackService
-  ) {}
+  constructor(private pizzaioloService: PizzaioloService) {}
 
   async sendMessage(payload: Payload): Promise<boolean> {
     if (!payloadValidator(payload)) return false
-
-    this.pizzaioloService.executeActions({
-      payload,
-      slackService: this.slackService,
-    })
-
+    this.pizzaioloService.executeActions(payload)
     return true
   }
 }

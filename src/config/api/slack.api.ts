@@ -13,7 +13,8 @@ export class SlackApi {
   }
 
   instanceClient() {
-    return axios.default.create({
+    //@ts-ignore
+    return axios.create({
       baseURL: this.api,
       timeout: 1000,
       headers: {

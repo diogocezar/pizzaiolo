@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import Logger from 'src/shared/logger'
-import { ICONS, MESSAGES } from 'src/common/constants'
+import Logger from 'src/common/utils/logger'
 import { formatAttachment, convertDate } from 'src/common/utils/formater'
 import { SlackService } from 'src/slack/slack.service'
 import { PizzaioloRepository } from './pizzaiolo.repository'
 import { PayloadAction } from 'src/common/interfaces/pizzaiolo/pizzaiolo.action'
 import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
+
+import { ICONS, MESSAGES } from 'src/common/constants'
+import { PullRequestPayload } from 'src/common/interfaces/github/pull_request'
 
 @Injectable()
 export class PizzaioloService {
@@ -50,160 +52,167 @@ export class PizzaioloService {
     }
   }
 
-  //TODO : Parei aqui
-
   async closedPullRequest({ html_url }: PayloadAction) {
-    const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
-    await slackService.addReaction(icons['closed'], messageTimeStamp)
+    try {
+      const messageTimeStamp =
+        await this.pizzaioloRepository.findMessageTimeStamp(html_url)
+      await this.slackService.addReaction({
+        name: ICONS.CLOSED,
+        timestamp: messageTimeStamp,
+      })
+    } catch (err) {
+      Logger.error(err)
+    }
   }
 
-  async submittedPullRequest({
-    review,
-    slackService,
-    html_url,
-  }: PayloadAction) {
-    const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
+  async submittedPullRequest({ review, html_url }: PayloadAction) {
+    try {
+      let count = 0
+      const messageTimeStamp =
+        await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
-    if (review.state === 'approved') {
-      const count = this.findSubmittedPullRequest({ html_url })
+      // TODO: refact to enum. e.g.: review.state === ReviewState.APPROVED
+      if (review.state === 'approved') {
+        count = await this.pizzaioloRepository.findSubmittedPullRequest(
+          html_url
+        )
 
-      return slackService.addReaction(
-        icons[`approved_${count}`],
-        messageTimeStamp
-      )
+        await this.slackService.addReaction({
+          name: ICONS[`APPROVED_${count}`],
+          timestamp: messageTimeStamp,
+        })
+
+        Logger.info({
+          type: 'SUBMITTED_PULL_REQUEST',
+          messageTimeStamp,
+          state: review.state,
+          count: count,
+        })
+
+        return
+      }
+
+      await this.slackService.addReaction({
+        name: ICONS.APPROVED,
+        timestamp: messageTimeStamp,
+      })
+
+      Logger.info({
+        type: 'SUBMITTED_PULL_REQUEST',
+        messageTimeStamp,
+        state: review.state,
+      })
+    } catch (err) {
+      Logger.error(err)
     }
-
-    return slackService.addReaction(icons[review.state], messageTimeStamp)
   }
 
   async createdPullRequest({
     comment,
-    slackService,
     user,
     created_at,
     html_url,
   }: PayloadAction) {
-    let message = ''
+    try {
+      const messageTimeStamp =
+        await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
-    if (comment) {
-      message += messages.comment
-      message += formatComment(comment)
+      const attachments = formatAttachment({
+        title: comment ? MESSAGES.COMMENT : MESSAGES.OPEN_PULL_REQUEST,
+        date: convertDate(created_at),
+        user_name: user.login,
+        user_avatar: user.avatar_url,
+        url: html_url,
+      })
+
+      const responseSlack = await this.slackService.sendMessage({
+        text: comment ? comment : MESSAGES.OPEN_PULL_REQUEST,
+        timestamp: messageTimeStamp,
+        attachments,
+      } as SlackMessage)
+
+      Logger.info({ slack: responseSlack })
+    } catch (err) {
+      Logger.error(err)
     }
-
-    const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
-
-    const requestInfos: RequestInfos = {
-      title: 'Uma nova atualização deste pedido!',
-      pizzaioloAvatar: user.avatar_url,
-      url: html_url,
-      date: convertDate(created_at),
-      pizzaiolo: user.login,
-    }
-
-    const response = await slackService.sendMessage(
-      message,
-      messageTimeStamp,
-      requestInfos
-    )
-
-    logger.info(response)
   }
 
   async resolvedPullRequest({
     thread,
-    slackService,
     user,
     created_at,
     html_url,
   }: PayloadAction) {
-    let message = ''
+    try {
+      const sendUrl = thread.comments[0].html_url || html_url
 
-    message += messages.resolved
+      const messageTimeStamp =
+        await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
-    if (thread) {
-      message += formatUrl(thread.comments[0].html_url)
+      const attachments = formatAttachment({
+        title: MESSAGES.RESOLVED,
+        date: convertDate(created_at),
+        user_name: user.login,
+        user_avatar: user.avatar_url,
+        url: sendUrl,
+      })
+
+      const responseSlack = await this.slackService.sendMessage({
+        text: MESSAGES.RESOLVED,
+        timestamp: messageTimeStamp,
+        attachments,
+      } as SlackMessage)
+      Logger.info({ slack: responseSlack })
+    } catch (err) {
+      Logger.error(err)
     }
-
-    message += formatMessageInfos(created_at, user.login, html_url)
-
-    const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
-
-    const requestInfos: RequestInfos = {
-      title: 'Pizza entregue!',
-      pizzaioloAvatar: user.avatar_url,
-      url: html_url,
-      date: convertDate(created_at),
-      pizzaiolo: user.login,
-    }
-
-    const response = await slackService.sendMessage(
-      message,
-      messageTimeStamp,
-      requestInfos
-    )
-
-    logger.info(response)
   }
 
   async unresolvedPullRequest({
     thread,
-    slackService,
     user,
     created_at,
     html_url,
   }: PayloadAction) {
-    let message = ''
-    message += messages.opened
+    try {
+      const sendUrl = thread.comments[0].html_url || html_url
 
-    if (thread) message += formatUrl(thread.comments[0].html_url)
+      const messageTimeStamp =
+        await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
-    message += formatMessageInfos(created_at, user.login, html_url)
+      const attachments = formatAttachment({
+        title: MESSAGES.UNRESOLVED,
+        date: convertDate(created_at),
+        user_name: user.login,
+        user_avatar: user.avatar_url,
+        url: sendUrl,
+      })
 
-    const messageTimeStamp = await this.findMessageTimeStamp({ html_url })
-
-    const requestInfos: RequestInfos = {
-      title: 'Eita, a pizza voltou!',
-      pizzaioloAvatar: user.avatar_url,
-      url: html_url,
-      date: convertDate(created_at),
-      pizzaiolo: user.login,
+      const responseSlack = await this.slackService.sendMessage({
+        text: MESSAGES.UNRESOLVED,
+        timestamp: messageTimeStamp,
+        attachments,
+      } as SlackMessage)
+      Logger.info({ slack: responseSlack })
+    } catch (err) {
+      Logger.error(err)
     }
-
-    const response = await slackService.sendMessage(
-      message,
-      messageTimeStamp,
-      requestInfos
-    )
-
-    logger.info(response)
   }
 
-  async executeActions({
-    payload,
-    slackService,
-  }: {
-    payload: PullRequestPayload
-    slackService: SlackService
-  }) {
+  async executeActions(payload: PullRequestPayload) {
     const { action, pull_request } = payload
-
     const { user, html_url, created_at, merged, draft, title } = pull_request
-
     if (draft && action === 'opened') return
-
-    // We need to keep this way because this context inside class
     const payloadToSend: PayloadAction = {
       title,
       merged,
       draft,
-      slackService,
       user,
       html_url,
       pull_request,
       created_at,
       ...payload,
     }
-
     switch (action) {
       case 'opened':
         this.openedPullRequest(payloadToSend)
@@ -227,6 +236,7 @@ export class PizzaioloService {
         this.closedPullRequest(payloadToSend)
         break
     }
-    await this.saveOnDatabase({ action, pull_request, user })
+
+    await this.pizzaioloRepository.save({ action, pull_request, user })
   }
 }
