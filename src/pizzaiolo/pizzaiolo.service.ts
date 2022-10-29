@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import Logger from 'src/common/utils/logger'
-import { formatAttachment, convertDate } from 'src/common/utils/formater'
+import { formatAttachment, convertDate } from 'src/common/utils/formatter'
 import { SlackService } from 'src/slack/slack.service'
 import { PizzaioloRepository } from './pizzaiolo.repository'
 import { PayloadAction } from 'src/common/interfaces/pizzaiolo/pizzaiolo.action'
