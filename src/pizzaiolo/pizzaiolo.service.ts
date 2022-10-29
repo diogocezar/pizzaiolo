@@ -7,9 +7,9 @@ import { PayloadAction } from 'src/common/interfaces/pizzaiolo/pizzaiolo.action'
 import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
 
 import { ICONS, MESSAGES } from 'src/common/constants'
-import { PullRequestPayload } from 'src/common/interfaces/github/pull_request'
-import { ReviewState } from 'src/common/enums/reviewState.enum'
-import { LogType } from 'src/common/enums/logType.enum'
+import { PullRequestPayload } from 'src/common/interfaces/github/pull-request'
+import { ReviewState } from 'src/common/enums/review-state.enum'
+import { LogType } from 'src/common/enums/log-type.enum'
 
 @Injectable()
 export class PizzaioloService {
