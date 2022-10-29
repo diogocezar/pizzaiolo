@@ -3,6 +3,10 @@ import { zonedTimeToUtc } from 'date-fns-tz'
 
 import { Comment } from 'src/types/base/coment'
 
+export const convertDate = (date: Date): string => {
+  return format(zonedTimeToUtc(date, 'America/Sao_Paulo'), 'dd/MM/yyyy - HH:ss')
+}
+
 export const formatMessageInfos = (
   created_at: any,
   login: string,

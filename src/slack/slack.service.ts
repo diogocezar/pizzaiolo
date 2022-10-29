@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable } from '@nestjs/common'
 import * as axios from 'axios'
+import { RequestInfos } from 'src/types/request.infos'
+import { SlackMessage } from 'src/types/slack.message'
 
 @Injectable()
 export class SlackService {
@@ -23,13 +25,61 @@ export class SlackService {
     })
   }
 
-  async sendMessage(message: string, thread_ts?: string): Promise<any> {
-    const { data } = await this.client.post('/chat.postMessage', {
+  async sendMessage(
+    message: string,
+    timestamp?: string,
+    requestInfos?: RequestInfos
+  ): Promise<any> {
+    let payload: SlackMessage = {
       channel: process.env.SLACK_CHANNEL,
       text: message,
-      ...(thread_ts && { thread_ts }),
-    })
-
+      ...(timestamp && { timestamp }),
+    }
+    if (requestInfos) {
+      const { title, date, pizzaiolo, pizzaioloAvatar, url } = requestInfos
+      payload = {
+        ...payload,
+        attachments: [
+          {
+            color: '#fff',
+            title: 'Veja os detalhes que acabaram de sair do forno:',
+            fields: [
+              {
+                title: 'Ingredientes',
+                value: title,
+                short: false,
+              },
+              {
+                title: 'Data do Pedido',
+                value: date,
+                short: true,
+              },
+              {
+                title: 'Pizzaiolo',
+                value: pizzaiolo,
+                short: true,
+              },
+            ],
+            title_link: url,
+            author_icon: pizzaioloAvatar,
+            author_name: pizzaiolo,
+            footer: 'Não se esuqueça de dar uma olhada no pedido!',
+          },
+          {
+            title: 'Que tal dar uma olhada nessa PR?',
+            color: '#3AA3E3',
+            actions: [
+              {
+                type: 'button',
+                text: 'Pegue um Pedaço 🍕',
+                url: url,
+              },
+            ],
+          },
+        ],
+      }
+    }
+    const { data } = await this.client.post('/chat.postMessage', payload)
     return data
   }
 
