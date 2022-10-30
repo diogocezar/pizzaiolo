@@ -5,7 +5,6 @@ const Logger = () => {
     .createLogger({
       level: 'info',
       format: winston.format.json(),
-      defaultMeta: { service: 'user-service' },
       transports: [
         new winston.transports.File({ filename: 'error.log', level: 'error' }),
         new winston.transports.File({ filename: 'combined.log' }),
@@ -18,9 +17,9 @@ const Logger = () => {
     )
 
   return {
-    info: (message: string) => logger.info(message),
-    error: (message: string) => logger.error(message),
-    warn: (message: string) => logger.warn(message),
+    info: (message: any) => logger.info(message),
+    error: (message: any) => logger.error(message),
+    warn: (message: any) => logger.warn(message),
   }
 }
 

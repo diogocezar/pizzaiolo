@@ -1,23 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { Payload } from 'src/types/payload'
-import { PizzaioloService } from './pizzaiolo/pizzaiolo.service'
-import { SlackService } from './slack/slack.service'
+import { Payload } from 'src/common/interfaces/github/payload'
+import { PizzaioloService } from 'src/pizzaiolo/pizzaiolo.service'
+import { payloadValidator } from 'src/common/validators/payload.validator'
 
 @Injectable()
 export class AppService {
-  constructor(
-    private pizzaioloService: PizzaioloService,
-    private slackService: SlackService
-  ) {}
+  constructor(private pizzaioloService: PizzaioloService) {}
 
   async sendMessage(payload: Payload): Promise<boolean> {
-    if (!this.pizzaioloService.validatePayload(payload)) return false
-
-    this.pizzaioloService.executeActions({
-      payload,
-      slackService: this.slackService,
-    })
-
+    if (!payloadValidator(payload)) return false
+    this.pizzaioloService.executeActions(payload)
     return true
   }
 }

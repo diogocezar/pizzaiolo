@@ -1,44 +1,40 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable } from '@nestjs/common'
-import * as axios from 'axios'
+import { SlackApi } from 'src/config/api/slack.api'
+import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
+import { SlackReaction } from 'src/common/interfaces/slack/slack.reaction'
 
 @Injectable()
 export class SlackService {
-  api: string
-  client: axios.Axios
+  constructor(private apiSlackService: SlackApi) {}
 
-  constructor() {
-    this.api = 'https://slack.com/api'
-    this.client = this.instanceClient()
-  }
-
-  instanceClient() {
-    // @ts-ignore
-    return axios.create({
-      baseURL: this.api,
-      timeout: 1000,
-      headers: {
-        Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-      },
-    })
-  }
-
-  async sendMessage(message: string, thread_ts?: string): Promise<any> {
-    const { data } = await this.client.post('/chat.postMessage', {
+  async sendMessage({
+    text,
+    timestamp,
+    attachments,
+  }: SlackMessage): Promise<any> {
+    let payload: SlackMessage = {
       channel: process.env.SLACK_CHANNEL,
-      text: message,
-      ...(thread_ts && { thread_ts }),
-    })
-
+      text,
+      ...(timestamp && { timestamp }),
+    }
+    if (attachments) {
+      payload = {
+        ...payload,
+        attachments,
+      }
+    }
+    const { data } = await this.apiSlackService.post(
+      '/chat.postMessage',
+      payload
+    )
     return data
   }
 
-  async addReaction(reaction: string, timestamp: string): Promise<void> {
+  async addReaction({ name, timestamp }: SlackReaction): Promise<void> {
     if (!timestamp) return
-
-    await this.client.post('/reactions.add', {
+    await this.apiSlackService.post('/reactions.add', {
       channel: process.env.SLACK_CHANNEL,
-      name: reaction,
+      name,
       timestamp,
     })
   }

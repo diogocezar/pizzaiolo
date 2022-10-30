@@ -1,16 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
-import { Payload } from 'src/types/payload'
-import { AppService } from 'src/app.service'
-import { GithubWebHookGuard } from 'src/guards/github.guard'
+import { Body, Controller, Post, UseGuards } from '@nestjs/common'
+import { Payload } from 'src/common/interfaces/github/payload'
+import { AppService } from './app.service'
+import { GithubWebHookGuard } from 'src/common/guards/github.guard'
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
-
-  @Get()
-  ping(): string {
-    return 'pong'
-  }
 
   @Post('/webhook')
   @UseGuards(GithubWebHookGuard)

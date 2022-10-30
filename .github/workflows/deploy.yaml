@@ -16,4 +16,5 @@ jobs:
           yarn prisma:generate
           yarn prisma:push
           yarn build
-          pm2 restart pizzaiolo
+          pm2 restart pizzaiolo --update-env
+          pm2 restart studio --update-env
