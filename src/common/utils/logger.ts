@@ -5,7 +5,7 @@ const Logger = () => {
     .createLogger({
       level: 'info',
       format: winston.format.json(),
-      defaultMeta: { service: 'user-service' },
+      defaultMeta: { service: 'pizzaiolo', source: 'production' },
     })
     .add(
       new winston.transports.Console({
