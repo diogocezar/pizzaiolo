@@ -2,49 +2,32 @@ import { Injectable } from '@nestjs/common'
 import { Payload } from 'src/common/interfaces/github/payload'
 import { PizzaioloService } from 'src/pizzaiolo/pizzaiolo.service'
 import { payloadValidator } from 'src/common/validators/payload.validator'
-import { PrismaService } from 'src/common/database/prisma/prisma.service'
-import { MESSAGES } from 'src/common/constants'
-import { formatAttachment } from 'src/common/utils/formatter'
+import { PayloadInteractivity } from 'src/common/interfaces/slack/interactivity.payload'
+import { interactivityValidator } from 'src/common/validators/interactivity.validator'
+import { InteractivityService } from 'src/pizzaiolo/interactivity.service'
 
 @Injectable()
 export class AppService {
   constructor(
     private pizzaioloService: PizzaioloService,
-    private prismaService: PrismaService
+    private interactivityService: InteractivityService
   ) {}
 
   async sendMessage(payload: Payload): Promise<boolean> {
     if (!payloadValidator(payload)) return false
+
     this.pizzaioloService.executeActions(payload)
+
     return true
   }
 
-  async command(payload: any): Promise<any> {
-    console.log(payload)
+  async interactivity(payload: PayloadInteractivity): Promise<boolean> {
+    const parsedPayload = interactivityValidator(payload)
 
-    const PRurl = payload.text
+    if (!parsedPayload) return
 
-    const foundPullRequest = await this.prismaService.pullRequest.findFirst({
-      where: { url: PRurl },
-    })
+    this.interactivityService.executeActions(parsedPayload)
 
-    // if (!foundPullRequest) {
-    //   return {
-    //     response_type: 'ephemeral',
-    //     text: '😱🍕 Pizza não encontrada',
-    //   }
-    // }
-
-    return {
-      response_type: 'in_channel',
-      text: MESSAGES.OPEN_PULL_REQUEST,
-      attachments: formatAttachment({
-        date: '',
-        title: '',
-        url: '',
-        user_avatar: '',
-        user_name: '',
-      }),
-    }
+    return true
   }
 }
