@@ -9,7 +9,7 @@ export const formatAttachment = ({
   user_avatar,
   url,
 }): Array<Attachments> => {
-  const attachments: Array<Attachments> = [
+  const attachments: Array<any> = [
     {
       color: '#fff',
       title: 'Veja os detalhes que acabaram de sair do forno:',
@@ -41,12 +41,33 @@ export const formatAttachment = ({
       actions: [
         {
           type: 'button',
+          style: 'primary',
           text: 'Pegue um Pedaço 🍕',
           url: url,
         },
       ],
     },
+    {
+      blocks: [
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'Reenviar pizza 🍕',
+                emoji: true,
+              },
+              value: 'resend',
+              action_id: 'resend',
+            },
+          ],
+        },
+      ],
+    },
   ]
+
   return attachments
 }
 
