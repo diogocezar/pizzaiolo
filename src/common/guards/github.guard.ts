@@ -11,10 +11,14 @@ export class GithubWebHookGuard implements CanActivate {
       const bodyFormatted = await rawBody(req)
       const chunk = bodyFormatted.toString().trim()
       const headerSignature = req.headers[X_HUB_SIGNATURE]
+      // TODO: Temporary to validate!
+      console.log(headerSignature)
       const signature = `sha1=${crypto
         .createHmac('sha1', process.env.GITHUB_WEBHOOK_SECRET)
         .update(chunk)
-        .digest('hex')}`
+        .digest('hex')}
+      `
+      console.log(signature)
       return headerSignature === signature
     }
     return false
