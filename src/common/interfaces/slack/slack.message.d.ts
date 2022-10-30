@@ -3,21 +3,37 @@ interface Fields {
   value: string
   short: boolean
 }
-interface Actions {
+
+interface TextDetails {
   type: string
   text: string
-  url: string
+  emoji: boolean
+}
+
+interface Actions {
+  type: string
+  text: string | TextDetails
+  url?: string
+  action_id?: string
+  style?: string
+  value?: string
+}
+
+interface Blocks {
+  type: string
+  elements: Actions[]
 }
 
 export interface Attachments {
   color?: string
-  title: string
+  title?: string
   fields?: Array<Fields>
   actions?: Array<Actions>
   title_link?: string
   author_icon?: string
   author_name?: string
   footer?: string
+  blocks?: Array<Blocks>
 }
 
 export interface SlackMessage {

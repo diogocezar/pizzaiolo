@@ -25,9 +25,11 @@ export class SlackApi {
 
   async post(path, payload): Promise<any> {
     try {
-      await this.client.post(path, payload)
+      return this.client.post(path, payload)
     } catch (err) {
       Logger.error(err)
+
+      throw err
     }
   }
 }

@@ -11,6 +11,7 @@ import { PrismaService } from 'src/common/database/prisma/prisma.service'
 import { SlackApi } from './config/api/slack.api'
 
 import { PizzaioloRepository } from './pizzaiolo/pizzaiolo.repository'
+import { InteractivityService } from 'src/pizzaiolo/interactivity.service'
 
 @Module({
   imports: [ConfigModule.forRoot()],
@@ -22,6 +23,7 @@ import { PizzaioloRepository } from './pizzaiolo/pizzaiolo.repository'
     PrismaService,
     SlackApi,
     PizzaioloRepository,
+    InteractivityService,
   ],
 })
 export class AppModule {}

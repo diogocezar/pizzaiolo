@@ -33,7 +33,7 @@ export const formatAttachment = ({
       title_link: url,
       author_icon: user_avatar,
       author_name: user_name,
-      footer: 'Não se esuqueça de dar uma olhada no pedido!',
+      footer: 'Não se esqueça de dar uma olhada no pedido!',
     },
     {
       title: 'Que tal dar uma olhada nessa PR?',
@@ -41,12 +41,33 @@ export const formatAttachment = ({
       actions: [
         {
           type: 'button',
+          style: 'primary',
           text: 'Pegue um Pedaço 🍕',
           url: url,
         },
       ],
     },
+    {
+      blocks: [
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'Tompero!',
+                emoji: true,
+              },
+              value: 'resend',
+              action_id: 'resend',
+            },
+          ],
+        },
+      ],
+    },
   ]
+
   return attachments
 }
 

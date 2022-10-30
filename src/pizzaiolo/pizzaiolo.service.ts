@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import Logger from 'src/common/utils/logger'
-import { formatAttachment, convertDate } from 'src/common/utils/formater'
+import { formatAttachment, convertDate } from 'src/common/utils/formatter'
 import { SlackService } from 'src/slack/slack.service'
 import { PizzaioloRepository } from './pizzaiolo.repository'
 import { PayloadAction } from 'src/common/interfaces/pizzaiolo/pizzaiolo.action'
@@ -62,10 +62,12 @@ export class PizzaioloService {
     try {
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
+
       await this.slackService.addReaction({
         name: ICONS.CLOSED,
         timestamp: messageTimeStamp,
       })
+
       Logger.info({
         type: LogType.CLOSED_PULL_REQUEST,
         messageTimeStamp,
