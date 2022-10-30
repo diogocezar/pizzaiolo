@@ -9,7 +9,7 @@ export const formatAttachment = ({
   user_avatar,
   url,
 }): Array<Attachments> => {
-  const attachments: Array<any> = [
+  const attachments: Array<Attachments> = [
     {
       color: '#fff',
       title: 'Veja os detalhes que acabaram de sair do forno:',
