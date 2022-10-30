@@ -56,7 +56,7 @@ export const formatAttachment = ({
               type: 'button',
               text: {
                 type: 'plain_text',
-                text: 'Reenviar pizza 🍕',
+                text: 'Tompero!',
                 emoji: true,
               },
               value: 'resend',
