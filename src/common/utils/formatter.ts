@@ -11,7 +11,7 @@ export const formatAttachment = ({
 }): Array<Attachments> => {
   const attachments: Array<Attachments> = [
     {
-      color: '#fff',
+      color: '#3AA3E3',
       title: 'Veja os detalhes que acabaram de sair do forno:',
       fields: [
         {
@@ -48,6 +48,9 @@ export const formatAttachment = ({
       ],
     },
     {
+      title:
+        'A pizza esfriou? Não se preocupe! Coloque TOMPERO no seu pedido! Ela volta pra você quentinha!',
+      color: '#3AA3E3',
       blocks: [
         {
           type: 'actions',
@@ -56,7 +59,7 @@ export const formatAttachment = ({
               type: 'button',
               text: {
                 type: 'plain_text',
-                text: 'Tompero!',
+                text: 'Tompero 🧂',
                 emoji: true,
               },
               value: 'resend',
