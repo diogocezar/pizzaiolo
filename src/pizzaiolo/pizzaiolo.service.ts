@@ -62,10 +62,12 @@ export class PizzaioloService {
     try {
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
+
       await this.slackService.addReaction({
         name: ICONS.CLOSED,
         timestamp: messageTimeStamp,
       })
+
       Logger.info({
         type: LogType.CLOSED_PULL_REQUEST,
         messageTimeStamp,
