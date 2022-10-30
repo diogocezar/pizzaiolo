@@ -6,7 +6,9 @@ interface Fields {
 interface Actions {
   type: string
   text: string
-  url: string
+  url?: string
+  action_id?: string
+  value?: string
 }
 
 export interface Attachments {
