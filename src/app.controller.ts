@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common'
+import { PayloadInteractivity } from 'src/common/interfaces/slack/interactivity.payload'
 import { Payload } from 'src/common/interfaces/github/payload'
 import { AppService } from './app.service'
 
@@ -11,8 +12,8 @@ export class AppController {
     return this.appService.sendMessage(payload)
   }
 
-  @Post('/command')
-  command(@Body() payload: any): Promise<string> {
-    return this.appService.command(payload)
+  @Post('/interactivity')
+  interactivity(@Body() payload: PayloadInteractivity): Promise<boolean> {
+    return this.appService.interactivity(payload)
   }
 }
