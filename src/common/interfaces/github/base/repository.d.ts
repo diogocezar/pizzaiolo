@@ -4,7 +4,7 @@ export interface Repository {
   name: string
   full_name: string
   private: boolean
-  owner: Owner
+  owner: User
   html_url: string
   description: string
   fork: boolean
@@ -68,10 +68,10 @@ export interface Repository {
   disabled: boolean
   open_issues_count: number
   license?: any
-  allow_forking: boolean
-  is_template: boolean
-  topics: string[]
-  visibility: string
+  allow_forking?: boolean
+  is_template?: boolean
+  topics?: string[]
+  visibility?: string
   forks: number
   open_issues: number
   watchers: number
