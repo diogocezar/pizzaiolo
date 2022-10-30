@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import * as axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import Logger from 'src/common/utils/logger'
 
 @Injectable()
 export class SlackApi {
   api: string
-  client: axios.Axios
+  client: AxiosInstance
 
   constructor() {
     this.api = 'https://slack.com/api'
@@ -13,7 +13,6 @@ export class SlackApi {
   }
 
   instanceClient() {
-    //@ts-ignore
     return axios.create({
       baseURL: this.api,
       timeout: 1000,
@@ -23,9 +22,9 @@ export class SlackApi {
     })
   }
 
-  async post(path, payload): Promise<any> {
+  async post(path: string, payload: unknown) {
     try {
-      await this.client.post(path, payload)
+      return this.client.post(path, payload)
     } catch (err) {
       Logger.error(err)
     }
