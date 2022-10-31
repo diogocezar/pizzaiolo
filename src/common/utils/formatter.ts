@@ -11,8 +11,8 @@ export const formatAttachment = ({
 }): Array<Attachments> => {
   const attachments: Array<Attachments> = [
     {
-      title: 'Veja os detalhes que acabaram de sair do forno:',
       color: '#3AA3E3',
+      title: 'Veja os detalhes que acabaram de sair do forno:',
       fields: [
         {
           title: 'Ingredientes',
@@ -36,6 +36,18 @@ export const formatAttachment = ({
       footer: 'Não se esqueça de dar uma olhada no pedido!',
     },
     {
+      title: 'Que tal dar uma olhada nessa PR?',
+      color: '#3AA3E3',
+      actions: [
+        {
+          type: 'button',
+          style: 'primary',
+          text: 'Pegue um Pedaço 🍕',
+          url: url,
+        },
+      ],
+    },
+    {
       blocks: [
         {
           type: 'actions',
@@ -43,16 +55,7 @@ export const formatAttachment = ({
             {
               type: 'button',
               text: {
-                type: 'button',
-                text: 'Veja a PR 🍕',
-                emoji: true,
-              },
-              url,
-            },
-            {
-              type: 'button',
-              text: {
-                type: 'button',
+                type: 'plain_text',
                 text: 'Tompero 🧂',
                 emoji: true,
               },
