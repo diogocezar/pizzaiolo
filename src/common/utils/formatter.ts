@@ -6,69 +6,123 @@ export const formatAttachment = ({
   title,
   date,
   user_name,
-  user_avatar,
   url,
 }): Array<Attachments> => {
-  const attachments: Array<Attachments> = [
-    {
-      color: '#3AA3E3',
-      title: 'Veja os detalhes que acabaram de sair do forno:',
-      fields: [
-        {
-          title: 'Ingredientes',
-          value: title,
-          short: false,
+  const attachments: Attachments = {
+    color: '#bd2222',
+    blocks: [
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: ':pinched_fingers: Mama Mia! Que código bonito! :pinched_fingers:',
+          emoji: true,
         },
-        {
-          title: 'Data do Pedido',
-          value: date,
-          short: true,
+      },
+      {
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: `*Pizzaiolo:*\n<example.com|${user_name}>`,
+          },
+          {
+            type: 'mrkdwn',
+            text: `*Data do Pedido:*\n${date}`,
+          },
+        ],
+      },
+      {
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: `*Nome:*\n ${title}`,
+          },
+          {
+            type: 'mrkdwn',
+            text: `*URL:*\n${url}`,
+          },
+        ],
+      },
+      {
+        type: 'context',
+        elements: [
+          {
+            type: 'mrkdwn',
+            text: 'Não se esqueça de dar uma olhada nessa beleza! :pinched_fingers:',
+          },
+        ],
+      },
+      {
+        type: 'divider',
+      },
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: 'Opções',
+          emoji: true,
         },
-        {
-          title: 'Pizzaiolo',
-          value: user_name,
-          short: true,
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'Pegue um pedaço da *PIZZA!* 🍕',
         },
-      ],
-      title_link: url,
-      author_icon: user_avatar,
-      author_name: user_name,
-      footer: 'Não se esqueça de dar uma olhada no pedido!',
-    },
-    {
-      title: 'Que tal dar uma olhada nessa PR?',
-      color: '#3AA3E3',
-      actions: [
-        {
+        accessory: {
           type: 'button',
-          style: 'primary',
-          text: 'Pegue um Pedaço 🍕',
-          url: url,
+          url,
+          text: {
+            type: 'plain_text',
+            text: 'Acessar a PR',
+            emoji: true,
+          },
         },
-      ],
-    },
-    {
-      blocks: [
-        {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Tompero 🧂',
-                emoji: true,
-              },
-              value: 'resend',
-              action_id: 'resend',
-            },
-          ],
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'Coloque mais *TOMPERO!* 🧂',
         },
-      ],
-    },
-  ]
-
-  return attachments
+        accessory: {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Recolocar no canal',
+            emoji: true,
+          },
+          value: 'resend',
+          action_id: 'resend',
+        },
+      },
+      {
+        type: 'divider',
+      },
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: 'Reações',
+          emoji: true,
+        },
+      },
+      {
+        type: 'context',
+        elements: [
+          {
+            type: 'mrkdwn',
+            text: ':one: :two: :three: Aprovações \n :pinched_fingers: Mesclado \n :speech_balloon: Comentário \n :salt: Repostar',
+          },
+        ],
+      },
+    ],
+  }
+  const templateToReturn: Array<Attachments> = []
+  templateToReturn.push(attachments)
+  return templateToReturn
 }
 
 export const convertDate = (date: Date): string => {

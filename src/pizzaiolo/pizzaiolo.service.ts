@@ -26,18 +26,14 @@ export class PizzaioloService {
     pull_request,
   }: PayloadAction) {
     try {
-      const text = MESSAGES.OPEN_PULL_REQUEST
-
       const attachments = formatAttachment({
         title,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: html_url,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text,
         timestamp: null,
         attachments,
       } as SlackMessage)
@@ -132,12 +128,10 @@ export class PizzaioloService {
         title: comment ? MESSAGES.COMMENT : MESSAGES.OPEN_PULL_REQUEST,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: html_url,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text: comment ? comment : MESSAGES.OPEN_PULL_REQUEST,
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
@@ -168,12 +162,10 @@ export class PizzaioloService {
         title: MESSAGES.RESOLVED,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: sendUrl,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text: MESSAGES.RESOLVED,
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
@@ -204,12 +196,10 @@ export class PizzaioloService {
         title: MESSAGES.UNRESOLVED,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: sendUrl,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text: MESSAGES.UNRESOLVED,
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
