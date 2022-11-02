@@ -7,7 +7,10 @@ export class GithubWebHookGuard implements CanActivate {
     const req = context.switchToHttp().getRequest()
 
     const encryptedBody = crypto
-      .createHmac('sha1', process.env.GITHUB_WEBHOOK_SECRET)
+      .createHmac(
+        'sha1',
+        process.env.GITHUB_WEBHOOK_SECRET as crypto.BinaryLike
+      )
       .update(req.rawBody)
       .digest('hex')
 

@@ -24,7 +24,7 @@ export class AppService {
   async interactivity(payload: PayloadInteractivity): Promise<boolean> {
     const parsedPayload = interactivityValidator(payload)
 
-    if (!parsedPayload) return
+    if (!parsedPayload) return false
 
     this.interactivityService.executeActions(parsedPayload)
 

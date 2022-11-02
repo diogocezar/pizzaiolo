@@ -19,7 +19,7 @@ export interface Attachments {
 
 export interface SlackMessage {
   channel?: string
-  text: string
+  text?: string
   timestamp?: string
   attachments?: Array<Attachments>
 }

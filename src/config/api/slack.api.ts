@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import axios, { AxiosInstance } from 'axios'
+import * as axios from 'axios'
 import Logger from 'src/common/utils/logger'
 
 @Injectable()
 export class SlackApi {
   api: string
-  client: AxiosInstance
+  client: axios.AxiosInstance
 
   constructor() {
     this.api = 'https://slack.com/api'
@@ -13,6 +13,7 @@ export class SlackApi {
   }
 
   instanceClient() {
+    //@ts-ignore
     return axios.create({
       baseURL: this.api,
       timeout: 1000,
