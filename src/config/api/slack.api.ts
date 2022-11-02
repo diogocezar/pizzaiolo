@@ -27,6 +27,8 @@ export class SlackApi {
       return this.client.post(path, payload)
     } catch (err) {
       Logger.error(err)
+
+      throw err
     }
   }
 }

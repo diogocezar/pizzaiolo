@@ -3,7 +3,9 @@ import Logger from 'src/common/utils/logger'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+  })
 
   await app.listen(3000, () => {
     Logger.info('🍕 Pizzailo is active! \n Listening on port 3000')
