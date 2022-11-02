@@ -15,7 +15,7 @@ export class SlackService {
     let payload: SlackMessage = {
       channel: process.env.SLACK_CHANNEL,
       text,
-      ...(timestamp && { timestamp }),
+      ...(timestamp && { thread_ts: timestamp }),
     }
     if (attachments) {
       payload = {
@@ -34,10 +34,22 @@ export class SlackService {
 
   async addReaction({ name, timestamp }: SlackReaction): Promise<void> {
     if (!timestamp) return
+
     await this.apiSlackService.post('/reactions.add', {
       channel: process.env.SLACK_CHANNEL,
       name,
       timestamp,
     })
+  }
+
+  async getReaction({ timestamp }: SlackReaction): Promise<any> {
+    if (!timestamp) return
+
+    const { data } = await this.apiSlackService.get('/reactions.get', {
+      channel: process.env.SLACK_CHANNEL,
+      timestamp,
+    })
+
+    return data
   }
 }
