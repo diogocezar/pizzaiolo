@@ -10,6 +10,7 @@ import { ICONS, MESSAGES } from 'src/common/constants'
 import { PullRequestPayload } from 'src/common/interfaces/github/pull-request'
 import { ReviewState } from 'src/common/enums/review-state.enum'
 import { LogType } from 'src/common/enums/log-type.enum'
+import { Review } from 'src/common/interfaces/github/review'
 
 @Injectable()
 export class PizzaioloService {
@@ -34,9 +35,8 @@ export class PizzaioloService {
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        timestamp: null,
         attachments,
-      } as SlackMessage)
+      })
 
       const responseBase = await this.pizzaioloRepository.saveMessage({
         pull_request,
@@ -61,7 +61,7 @@ export class PizzaioloService {
 
       await this.slackService.addReaction({
         name: ICONS.CLOSED,
-        timestamp: messageTimeStamp,
+        ...(messageTimeStamp && { timestamp: messageTimeStamp }),
       })
 
       Logger.info({
@@ -79,20 +79,20 @@ export class PizzaioloService {
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
-      if (review.state === ReviewState.APPROVED) {
+      if (review!.state === ReviewState.APPROVED) {
         count = await this.pizzaioloRepository.findSubmittedPullRequest(
           html_url
         )
 
         await this.slackService.addReaction({
           name: ICONS[`APPROVED_${count}`],
-          timestamp: messageTimeStamp,
+          ...(messageTimeStamp && { timestamp: messageTimeStamp }),
         })
 
         Logger.info({
           type: LogType.SUBMITTED_PULL_REQUEST,
           messageTimeStamp,
-          state: review.state,
+          state: review!.state,
           count: count,
         })
 
@@ -101,13 +101,13 @@ export class PizzaioloService {
 
       await this.slackService.addReaction({
         name: ICONS.APPROVED,
-        timestamp: messageTimeStamp,
+        ...(messageTimeStamp && { timestamp: messageTimeStamp }),
       })
 
       Logger.info({
         type: LogType.SUBMITTED_PULL_REQUEST,
         messageTimeStamp,
-        state: review.state,
+        state: review!.state,
       })
     } catch (err) {
       Logger.error({ type: LogType.SUBMITTED_PULL_REQUEST, error: err })
@@ -153,7 +153,7 @@ export class PizzaioloService {
     html_url,
   }: PayloadAction) {
     try {
-      const sendUrl = thread.comments[0].html_url || html_url
+      const sendUrl = thread!.comments[0].html_url || html_url
 
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
@@ -187,7 +187,7 @@ export class PizzaioloService {
     html_url,
   }: PayloadAction) {
     try {
-      const sendUrl = thread.comments[0].html_url || html_url
+      const sendUrl = thread!.comments[0].html_url || html_url
 
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
@@ -224,7 +224,6 @@ export class PizzaioloService {
       draft,
       user,
       html_url,
-      pull_request,
       created_at,
       ...payload,
     }

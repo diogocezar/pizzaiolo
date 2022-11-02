@@ -5,7 +5,7 @@ import Logger from 'src/common/utils/logger'
 @Injectable()
 export class SlackApi {
   api: string
-  client: axios.Axios
+  client: axios.AxiosInstance
 
   constructor() {
     this.api = 'https://slack.com/api'
@@ -23,7 +23,7 @@ export class SlackApi {
     })
   }
 
-  async post(path, payload): Promise<any> {
+  async post(path: string, payload: unknown) {
     try {
       return this.client.post(path, payload)
     } catch (err) {

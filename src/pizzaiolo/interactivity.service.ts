@@ -13,8 +13,7 @@ export class InteractivityService {
 
     await this.slackService.sendMessage({
       text,
-      timestamp: null,
       attachments,
-    } as SlackMessage)
+    })
   }
 }

@@ -1,6 +1,6 @@
-import { Links } from '@/types/base/links'
-import { User } from '@/types/base/user'
-import { BasePullRequest } from 'src/types/base/base_pull_request'
+import { Links } from 'src/common/interfaces/github/base/links'
+import { User } from 'src/common/interfaces/github/base/user'
+import { BasePullRequest } from 'src/common/interfaces/github/base_pull_request'
 
 export interface Review {
   id: number
@@ -17,5 +17,6 @@ export interface Review {
 }
 
 export interface ReviewPayload extends BasePullRequest {
+  action: string
   review: Review
 }

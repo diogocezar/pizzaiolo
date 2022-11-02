@@ -1,6 +1,6 @@
-import { Links } from '@/types/base/links'
-import { Reactions } from '@/types/base/reactions'
-import { User } from '@/types/base/user'
+import { Links } from 'src/common/interfaces/github/base/links'
+import { Reactions } from 'src/common/interfaces/github/base/reactions'
+import { User } from 'src/common/interfaces/github/base/user'
 
 export interface Comment {
   url: string
