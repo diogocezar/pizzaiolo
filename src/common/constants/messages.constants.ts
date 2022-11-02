@@ -1,6 +1,6 @@
 const MESSAGES = {
   OPEN_PULL_REQUEST: '🤌 Mama Mia! Que código bonito! 🤌\n',
-  COMMENT: '🍕 Mama Mia! *Reclamação do Cliente!* 🍕',
+  COMMENT: '🍕 Mama Mia! *Reclamação do Cliente!*',
   RESOLVED: '✅ Uma thread foi resolvida!\n',
   UNRESOLVED: '❌ Uma thread não foi resolvida!\n',
   OPENED: '👉 Uma thread foi marcada como aberta!\n',
