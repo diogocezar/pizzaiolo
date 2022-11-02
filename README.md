@@ -10,8 +10,8 @@
 - [💻 Pre-requisites](#-pre-requisites)
 - [☕️ Configuration](#️-configuration)
 - [🚀 Installation](#-installation)
-- [📫 Contributtins](#-contributtins)
-- [🤝 Colaborators](#-colaborators)
+- [📫 Contributing](#-contributtins)
+- [🤝 Collaborators](#-colaborators)
 
 ## 👉 What is this?
 
@@ -25,7 +25,7 @@ In our team we work with a code-review step.
 
 In this moment, when a developer finish the code, it's necessary that another one review it.
 
-But, how to mantain all PRs and their respectives status stored in one place?
+But, how to maintain all PRs and their respective status stored in one place?
 
 Thats is Pizzaiolo!
 
@@ -43,7 +43,7 @@ You will need:
 
 ## ☕️ Configuration
 
-Before the instalation, please you will need to configure:
+Before the installation, please you will need to configure:
 
 - [Slack](docs/SLACK_CONFIG.md)
 - [GitHub](docs/GITHUB_CONFIG.md)
@@ -59,11 +59,11 @@ yarn build
 yarn start
 ```
 
-## 📫 Contributtins
+## 📫 Contributing
 
 Please take a look on the [contributing](docs/CONTRIBUTING.md) session.
 
-## 🤝 Colaborators
+## 🤝 Collaborators
 
 So many pizzas to:
 
