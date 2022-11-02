@@ -1,4 +1,6 @@
 export interface SlackReaction {
-  name: string
+  name?: string
   timestamp?: string
+  users?: string[]
+  count?: number
 }

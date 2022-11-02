@@ -217,7 +217,9 @@ export class PizzaioloService {
   async executeActions(payload: PullRequestPayload) {
     const { action, pull_request } = payload
     const { user, html_url, created_at, merged, draft, title } = pull_request
+
     if (draft && action === 'opened') return
+
     const payloadToSend: PayloadAction = {
       title,
       merged,
@@ -228,6 +230,7 @@ export class PizzaioloService {
       created_at,
       ...payload,
     }
+
     switch (action) {
       case 'opened':
         this.openedPullRequest(payloadToSend)

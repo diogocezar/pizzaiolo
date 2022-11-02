@@ -23,9 +23,19 @@ export class SlackApi {
     })
   }
 
-  async post(path, payload): Promise<any> {
+  async post(path: string, payload: Record<any, any>): Promise<any> {
     try {
       return this.client.post(path, payload)
+    } catch (err) {
+      Logger.error(err)
+
+      throw err
+    }
+  }
+
+  async get(path: string, queryParams: Record<any, any>): Promise<any> {
+    try {
+      return this.client.get(`${path}?${new URLSearchParams(queryParams)}`)
     } catch (err) {
       Logger.error(err)
 
