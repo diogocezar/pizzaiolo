@@ -1,6 +1,6 @@
-import { BasePullRequest } from 'src/common/interfaces/github/base/base_pull_request'
+import { PullRequestPayload } from 'src/common/interfaces/github/pull-request.payload'
 
-export const pullRequestMock: BasePullRequest = {
+export const pullRequestMock: PullRequestPayload = {
   action: 'opened',
   pull_request: {
     url: 'https://api.github.com/repos/Codertocat/Hello-World/pulls/2',
