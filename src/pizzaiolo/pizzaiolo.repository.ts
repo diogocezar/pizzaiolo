@@ -8,7 +8,7 @@ import Logger from 'src/common/utils/logger'
 export class PizzaioloRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async save({ action, pull_request, user }: PizzaioloEvent): Promise<void> {
+  async save({ action, pull_request, user }: PizzaioloEvent) {
     try {
       const connectOrCreate = {
         data: {
@@ -37,19 +37,16 @@ export class PizzaioloRepository {
           },
         },
       }
-      await this.prismaService.events.create(connectOrCreate)
+
+      return await this.prismaService.events.create(connectOrCreate)
     } catch (err) {
       Logger.error(err)
     }
   }
 
-  async saveMessage({
-    timestamp,
-    pull_request,
-    url,
-  }: PizzaioloMessage): Promise<void> {
+  async saveMessage({ timestamp, pull_request, url }: PizzaioloMessage) {
     try {
-      await this.prismaService.message.create({
+      return await this.prismaService.message.create({
         data: {
           ts: timestamp,
           pullRequest: {
