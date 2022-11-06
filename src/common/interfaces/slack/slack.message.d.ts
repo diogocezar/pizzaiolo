@@ -1,28 +1,25 @@
-interface Fields {
-  title: string
-  value: string
-  short: boolean
-}
-interface Actions {
+interface TextDetails {
   type: string
-  text: string
-  url: string
+  text: string | TextDetails
+  emoji?: boolean
+  url?: string
+}
+interface Blocks {
+  type: string
+  text?: TextDetails
+  fields?: Array[{ type: string; text: string }]
+  elements?: Array[{ type: string; text: string }]
+  accessory?: TextDetails & { value?: string; action_id?: string }
 }
 
 export interface Attachments {
   color?: string
-  title: string
-  fields?: Array<Fields>
-  actions?: Array<Actions>
-  title_link?: string
-  author_icon?: string
-  author_name?: string
-  footer?: string
+  blocks: Array<Blocks>
 }
 
 export interface SlackMessage {
   channel?: string
-  text: string
+  text?: string
   timestamp?: string
   attachments?: Array<Attachments>
 }

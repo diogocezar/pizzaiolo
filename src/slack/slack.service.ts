@@ -23,10 +23,12 @@ export class SlackService {
         attachments,
       }
     }
+
     const { data } = await this.apiSlackService.post(
       '/chat.postMessage',
       payload
     )
+
     return data
   }
 

@@ -30,7 +30,7 @@ But, how to mantain all PRs and their respectives status stored in one place?
 Thats is Pizzaiolo!
 
 <p align="center">
-  <img src="./assets/images/pizzaiolo_sample.png" alt="Sample Pizzaiolo">
+  <img src="./assets/images/pizzaiolo-sample.png" alt="Sample Pizzaiolo">
 </p>
 
 ## 💻 Pre-requisites

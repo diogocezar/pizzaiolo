@@ -14,5 +14,5 @@ export const payloadValidator = (payload: Payload): boolean => {
     Actions.UNRESOLVED,
   ]
 
-  return validActions.includes(action)
+  return validActions.includes(action as Actions)
 }

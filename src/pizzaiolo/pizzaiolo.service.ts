@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import Logger from 'src/common/utils/logger'
-import { formatAttachment, convertDate } from 'src/common/utils/formater'
+import { formatAttachment, convertDate } from 'src/common/utils/formatter'
 import { SlackService } from 'src/slack/slack.service'
 import { PizzaioloRepository } from './pizzaiolo.repository'
 import { PayloadAction } from 'src/common/interfaces/pizzaiolo/pizzaiolo.action'
 import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
 
 import { ICONS, MESSAGES } from 'src/common/constants'
-import { ReviewState } from 'src/common/enums/reviewState.enum'
-import { LogType } from 'src/common/enums/logType.enum'
-import { BasePullRequest } from 'src/common/interfaces/github/base/base_pull_request'
+import { ReviewState } from 'src/common/enums/review-state.enum'
+import { LogType } from 'src/common/enums/log-type.enum'
+import { PullRequestPayload } from 'src/common/interfaces/github/pull-request.payload'
 
 @Injectable()
 export class PizzaioloService {
@@ -26,21 +26,16 @@ export class PizzaioloService {
     pull_request,
   }: PayloadAction) {
     try {
-      const text = MESSAGES.OPEN_PULL_REQUEST
-
       const attachments = formatAttachment({
         title,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: html_url,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text,
-        timestamp: null,
         attachments,
-      } as SlackMessage)
+      })
 
       const responseBase = await this.pizzaioloRepository.saveMessage({
         pull_request,
@@ -62,10 +57,12 @@ export class PizzaioloService {
     try {
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
+
       await this.slackService.addReaction({
         name: ICONS.CLOSED,
-        timestamp: messageTimeStamp,
+        ...(messageTimeStamp && { timestamp: messageTimeStamp }),
       })
+
       Logger.info({
         type: LogType.CLOSED_PULL_REQUEST,
         messageTimeStamp,
@@ -81,20 +78,20 @@ export class PizzaioloService {
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
-      if (review.state === ReviewState.APPROVED) {
+      if (review!.state === ReviewState.APPROVED) {
         count = await this.pizzaioloRepository.findSubmittedPullRequest(
           html_url
         )
 
         await this.slackService.addReaction({
           name: ICONS[`APPROVED_${count}`],
-          timestamp: messageTimeStamp,
+          ...(messageTimeStamp && { timestamp: messageTimeStamp }),
         })
 
         Logger.info({
           type: LogType.SUBMITTED_PULL_REQUEST,
           messageTimeStamp,
-          state: review.state,
+          state: review!.state,
           count: count,
         })
 
@@ -103,13 +100,13 @@ export class PizzaioloService {
 
       await this.slackService.addReaction({
         name: ICONS.APPROVED,
-        timestamp: messageTimeStamp,
+        ...(messageTimeStamp && { timestamp: messageTimeStamp }),
       })
 
       Logger.info({
         type: LogType.SUBMITTED_PULL_REQUEST,
         messageTimeStamp,
-        state: review.state,
+        state: review!.state,
       })
     } catch (err) {
       Logger.error({ type: LogType.SUBMITTED_PULL_REQUEST, error: err })
@@ -130,12 +127,10 @@ export class PizzaioloService {
         title: comment ? MESSAGES.COMMENT : MESSAGES.OPEN_PULL_REQUEST,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: html_url,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text: comment ? comment : MESSAGES.OPEN_PULL_REQUEST,
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
@@ -157,7 +152,7 @@ export class PizzaioloService {
     html_url,
   }: PayloadAction) {
     try {
-      const sendUrl = thread.comments[0].html_url || html_url
+      const sendUrl = thread!.comments[0].html_url || html_url
 
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
@@ -166,12 +161,10 @@ export class PizzaioloService {
         title: MESSAGES.RESOLVED,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: sendUrl,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text: MESSAGES.RESOLVED,
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
@@ -193,7 +186,7 @@ export class PizzaioloService {
     html_url,
   }: PayloadAction) {
     try {
-      const sendUrl = thread.comments[0].html_url || html_url
+      const sendUrl = thread!.comments[0].html_url || html_url
 
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
@@ -202,12 +195,10 @@ export class PizzaioloService {
         title: MESSAGES.UNRESOLVED,
         date: convertDate(created_at),
         user_name: user.login,
-        user_avatar: user.avatar_url,
         url: sendUrl,
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        text: MESSAGES.UNRESOLVED,
         timestamp: messageTimeStamp,
         attachments,
       } as SlackMessage)
@@ -222,7 +213,7 @@ export class PizzaioloService {
     }
   }
 
-  async executeActions(payload: BasePullRequest) {
+  async executeActions(payload: PullRequestPayload) {
     const { action, pull_request } = payload
     const { user, html_url, created_at, merged, draft, title } = pull_request
     if (draft && action === 'opened') return
@@ -232,7 +223,6 @@ export class PizzaioloService {
       draft,
       user,
       html_url,
-      pull_request,
       created_at,
       ...payload,
     }

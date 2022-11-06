@@ -14,7 +14,7 @@
 
 In [Slack Apps Dashboard](https://api.slack.com/apps) create a new app in Button "New App".
 
-Then, select "From an app manifest" option, and past the json `app_manifest_example.json`, of this root of this project. And change the `<Your bot's display name>` string, by your but name, and can do anything.
+Then, select "From an app manifest" option, and past the json `app_manifest_example.json`, of this root of this project. And change the `<Your bot's display name>` string, by your but name, and can do anything and `<Your server url>` by your server URL.
 
 Then, click in create.
 
