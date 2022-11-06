@@ -7,9 +7,9 @@ import { PayloadAction } from 'src/common/interfaces/pizzaiolo/pizzaiolo.action'
 import { SlackMessage } from 'src/common/interfaces/slack/slack.message'
 
 import { ICONS, MESSAGES } from 'src/common/constants'
-import { PullRequestPayload } from 'src/common/interfaces/github/pull_request'
 import { ReviewState } from 'src/common/enums/reviewState.enum'
 import { LogType } from 'src/common/enums/logType.enum'
+import { BasePullRequest } from 'src/common/interfaces/github/base/base_pull_request'
 
 @Injectable()
 export class PizzaioloService {
@@ -222,7 +222,7 @@ export class PizzaioloService {
     }
   }
 
-  async executeActions(payload: PullRequestPayload) {
+  async executeActions(payload: BasePullRequest) {
     const { action, pull_request } = payload
     const { user, html_url, created_at, merged, draft, title } = pull_request
     if (draft && action === 'opened') return

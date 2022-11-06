@@ -16,7 +16,7 @@ export interface PullRequest {
   updated_at: Date
   closed_at?: any
   merged_at?: any
-  merge_commit_sha: string
+  merge_commit_sha?: string
   assignee?: any
   assignees: any[]
   requested_reviewers: any[]
