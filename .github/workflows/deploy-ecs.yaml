@@ -1,0 +1,116 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [staging, main]
+
+env:
+  REPOSITORY_NAME: pizzaiolo
+  ORGANIZATION_NAME: bankme-tech
+  ECS_ENVIROMENTS: |
+    DATABASE_URL=${{secrets.DATABASE_URL}}
+    SLACK_CHANNEL=${{secrets.SLACK_CHANNEL}}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/${{ env.ORGANIZATION_NAME }}/${{ env.REPOSITORY_NAME }}:${{ github.run_id }}
+          build-args: github_token=${{secrets.GITHUB_TOKEN}}
+
+  deploy_nprod:
+    name: Deploy nprod
+    environment: nprod
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/staging' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Describe task-definition
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition ${{ secrets.ECS_TASK_DEFINITION_NAME }} \
+          --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: application_container
+          image: ghcr.io/${{ env.ORGANIZATION_NAME }}/${{ env.REPOSITORY_NAME }}:${{ github.run_id }}
+          environment-variables: ${{ env.ECS_ENVIROMENTS }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE_NAME }}
+          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: false
+
+  deploy_prod:
+    name: Deploy prod
+    environment: prod
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Describe task-definition
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition ${{ secrets.ECS_TASK_DEFINITION_NAME }} \
+          --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: application_container
+          image: ghcr.io/${{ env.ORGANIZATION_NAME }}/${{ env.REPOSITORY_NAME }}:${{ github.run_id }}
+          environment-variables: ${{ env.ECS_ENVIROMENTS }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE_NAME }}
+          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: false
