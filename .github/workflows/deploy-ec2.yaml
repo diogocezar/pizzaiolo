@@ -5,9 +5,6 @@ on:
     workflows: ['Code Quality']
     types:
       - completed
-  push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -32,7 +29,6 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.ORGANIZATION_NAME }}/${{ env.REPOSITORY_NAME }}:${{ github.run_id }}
           build-args: github_token=${{secrets.GITHUB_TOKEN}}
-
 #   deploy_nprod:
 #     name: Deploy nprod
 #     environment: nprod

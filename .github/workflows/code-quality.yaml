@@ -2,7 +2,7 @@ name: Code Quality
 
 on:
   push:
-    branches: staging
+    branches: main
 
 jobs:
   build:
