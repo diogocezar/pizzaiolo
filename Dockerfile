@@ -1,55 +1,31 @@
-FROM node:16-bullseye as ts-compiler
+FROM node:lts AS builder
 
-WORKDIR /usr/app
+WORKDIR /app
 
-COPY package*.json ./
+COPY package.json yarn.lock tsconfig* nest-cli.json ./
+COPY prisma ./prisma/
 
-COPY tsconfig*.json ./
+RUN yarn install --prod
 
-RUN yarn
+RUN npx prisma generate --schema ./prisma/schema.prisma
 
-COPY . ./
+COPY . .
 
-RUN npx prisma generate
+RUN yarn add @nestjs/cli
 
 RUN yarn run build
 
-FROM node:16-bullseye as ts-remover
+FROM node:lts
 
-WORKDIR /usr/app
+WORKDIR /app
 
-COPY --from=ts-compiler /usr/app/package*.json ./
-COPY --from=ts-compiler /usr/app/yarn.lock ./
-COPY --from=ts-compiler /usr/app/dist ./
-COPY --from=ts-compiler /usr/app/tsconfig.*.json ./
-COPY --from=ts-compiler /usr/app/tsconfig.json ./
+ARG PORT=4000
 
-# When implements the prisma client, uncomment this line
-#COPY --from=ts-compiler /usr/app/prisma ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
 
-# Run when test local
-# COPY --from=ts-compiler /usr/app/.env ./
+EXPOSE $PORT
 
-RUN yarn
-
-RUN npx prisma generate
-
-FROM node:16-bullseye
-
-RUN apt update \
-    && apt install -y \
-    bzip2 \
-    build-essential \
-    chrpath \
-    libssl-dev \
-    libxft-dev 
-
-RUN npm install -g @nestjs/cli
-
-WORKDIR /usr/app
-
-COPY --from=ts-remover /usr/app ./
-
-EXPOSE 3000
-
-CMD ["yarn", "run" ,"start:prod"]
+CMD [ "node", "dist/src/main" ]
