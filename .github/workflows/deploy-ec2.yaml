@@ -27,7 +27,7 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ env.ORGANIZATION_NAME }}/${{ env.REPOSITORY_NAME }}:${{ github.run_id }}
+          tags: ghcr.io/diogocezar/pizzaiolo:${{ github.run_id }}
           build-args: github_token=${{secrets.GITHUB_TOKEN}}
 #   deploy_nprod:
 #     name: Deploy nprod
