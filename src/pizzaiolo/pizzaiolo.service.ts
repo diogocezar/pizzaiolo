@@ -116,12 +116,7 @@ export class PizzaioloService {
     }
   }
 
-  async createdPullRequest({
-    comment,
-    user,
-    created_at,
-    html_url,
-  }: PayloadAction) {
+  async createdPullRequest({ comment, created_at, html_url }: PayloadAction) {
     try {
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
