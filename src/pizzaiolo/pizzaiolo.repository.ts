@@ -62,8 +62,8 @@ export class PizzaioloRepository {
                 id: pull_request?.id || undefined,
               },
               create: {
-                id: pull_request?.id || undefined,
-                url: url || undefined,
+                id: pull_request?.id || 0,
+                url: url || '',
               },
             },
           },
