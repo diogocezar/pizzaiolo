@@ -1,8 +1,6 @@
 {
   "name": "pizzaiolo",
-  "version": "1.0.7",
-  "description": "",
-  "author": "",
+  "version": "1.0.8",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
