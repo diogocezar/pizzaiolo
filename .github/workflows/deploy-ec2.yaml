@@ -21,11 +21,15 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get NPM Version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
       - name: Docker build and push
         uses: docker/build-push-action@v2
         with:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/diogocezar/pizzaiolo:1.0.2
+          tags: ghcr.io/diogocezar/pizzaiolo:${{ steps.package-version.outputs.current-version}}
           build-args: github_token=${{secrets.GITHUB_TOKEN}}
