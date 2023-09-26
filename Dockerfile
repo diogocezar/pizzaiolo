@@ -25,7 +25,7 @@ COPY --from=ts-compiler /usr/app/tsconfig.*.json ./
 COPY --from=ts-compiler /usr/app/tsconfig.json ./
 
 # When implements the prisma client, uncomment this line
-#COPY --from=ts-compiler /usr/app/prisma ./
+COPY --from=ts-compiler /usr/app/prisma ./
 
 # Run when test local
 # COPY --from=ts-compiler /usr/app/.env ./
