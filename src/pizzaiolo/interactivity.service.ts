@@ -23,7 +23,7 @@ export class InteractivityService {
 
     const newMessage = await this.slackService.sendMessage({
       text,
-      timestamp: null,
+      timestamp: undefined,
       attachments,
     } as SlackMessage)
 
@@ -34,14 +34,15 @@ export class InteractivityService {
       })
     })
 
-    const foundPullRequest = await this.pizzaioloRepository.findPullRequest({
-      timestamp: message.ts,
-    })
+    const foundPullRequest =
+      (await this.pizzaioloRepository.findPullRequest({
+        timestamp: message.ts,
+      })) || undefined
 
     await this.pizzaioloRepository.saveMessage({
-      pull_request: foundPullRequest,
+      pull_request: foundPullRequest || undefined,
       timestamp: newMessage.ts,
-      url: foundPullRequest.url,
+      url: foundPullRequest?.url,
     })
   }
 }

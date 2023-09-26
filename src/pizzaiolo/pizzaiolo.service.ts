@@ -34,7 +34,7 @@ export class PizzaioloService {
       })
 
       const responseSlack = await this.slackService.sendMessage({
-        timestamp: null,
+        timestamp: undefined,
         attachments,
       } as SlackMessage)
 
@@ -57,7 +57,8 @@ export class PizzaioloService {
   async closedPullRequest({ html_url }: PayloadAction) {
     try {
       const messageTimeStamp =
-        await this.pizzaioloRepository.findMessageTimeStamp(html_url)
+        (await this.pizzaioloRepository.findMessageTimeStamp(html_url)) ||
+        undefined
 
       await this.slackService.addReaction({
         name: ICONS.CLOSED,
@@ -77,9 +78,10 @@ export class PizzaioloService {
     try {
       let count = 0
       const messageTimeStamp =
-        await this.pizzaioloRepository.findMessageTimeStamp(html_url)
+        (await this.pizzaioloRepository.findMessageTimeStamp(html_url)) ||
+        undefined
 
-      if (review.state === ReviewState.APPROVED) {
+      if (review?.state === ReviewState.APPROVED) {
         count = await this.pizzaioloRepository.findSubmittedPullRequest(
           html_url
         )
@@ -92,7 +94,7 @@ export class PizzaioloService {
         Logger.info({
           type: LogType.SUBMITTED_PULL_REQUEST,
           messageTimeStamp,
-          state: review.state,
+          state: review?.state,
           count: count,
         })
 
@@ -107,7 +109,7 @@ export class PizzaioloService {
       Logger.info({
         type: LogType.SUBMITTED_PULL_REQUEST,
         messageTimeStamp,
-        state: review.state,
+        state: review?.state,
       })
     } catch (err) {
       Logger.error({ type: LogType.SUBMITTED_PULL_REQUEST, error: err })
@@ -125,9 +127,9 @@ export class PizzaioloService {
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
 
       const attachments = formatAttachment({
-        title: comment ? MESSAGES.COMMENT : MESSAGES.OPEN_PULL_REQUEST,
+        title: comment?.body ? comment?.body : MESSAGES.OPEN_PULL_REQUEST,
         date: convertDate(created_at),
-        user_name: user.login,
+        user_name: comment?.user?.login,
         url: html_url,
       })
 
@@ -153,7 +155,7 @@ export class PizzaioloService {
     html_url,
   }: PayloadAction) {
     try {
-      const sendUrl = thread.comments[0].html_url || html_url
+      const sendUrl = thread?.comments[0].html_url || html_url
 
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
@@ -187,7 +189,7 @@ export class PizzaioloService {
     html_url,
   }: PayloadAction) {
     try {
-      const sendUrl = thread.comments[0].html_url || html_url
+      const sendUrl = thread?.comments[0].html_url || html_url
 
       const messageTimeStamp =
         await this.pizzaioloRepository.findMessageTimeStamp(html_url)
@@ -226,7 +228,6 @@ export class PizzaioloService {
       draft,
       user,
       html_url,
-      pull_request,
       created_at,
       ...payload,
     }

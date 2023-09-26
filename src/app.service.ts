@@ -14,20 +14,17 @@ export class AppService {
   ) {}
 
   async sendMessage(payload: Payload): Promise<boolean> {
-    if (!payloadValidator(payload)) return false
+    if (!payloadValidator(payload)) throw new Error('Invalid payload')
 
     this.pizzaioloService.executeActions(payload)
-
     return true
   }
 
   async interactivity(payload: PayloadInteractivity): Promise<boolean> {
     const parsedPayload = interactivityValidator(payload)
-
-    if (!parsedPayload) return
+    if (!parsedPayload) throw new Error('Invalid payload')
 
     this.interactivityService.executeActions(parsedPayload)
-
     return true
   }
 }

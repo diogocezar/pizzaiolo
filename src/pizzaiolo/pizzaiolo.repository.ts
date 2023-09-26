@@ -48,19 +48,22 @@ export class PizzaioloRepository {
     timestamp,
     pull_request,
     url,
-  }: PizzaioloMessage): Promise<Message> {
+  }: PizzaioloMessage): Promise<Message | void> {
     try {
+      if (!timestamp) {
+        throw new Error('Timestamp is required')
+      }
       return this.prismaService.message.create({
         data: {
           ts: timestamp,
           pullRequest: {
             connectOrCreate: {
               where: {
-                id: pull_request.id,
+                id: pull_request?.id || undefined,
               },
               create: {
-                id: pull_request.id,
-                url: url,
+                id: pull_request?.id || undefined,
+                url: url || undefined,
               },
             },
           },
@@ -87,7 +90,7 @@ export class PizzaioloRepository {
     timestamp,
   }: {
     timestamp: string
-  }): Promise<PullRequest | null> {
+  }): Promise<PullRequest | undefined> {
     try {
       const pullRequest = await this.prismaService.message.findFirst({
         where: {
@@ -98,13 +101,13 @@ export class PizzaioloRepository {
         },
       })
 
-      return pullRequest?.pullRequest
+      return pullRequest?.pullRequest || undefined
     } catch (err) {
       Logger.error(err)
     }
   }
 
-  async findMessageTimeStamp(url: string): Promise<string | null> {
+  async findMessageTimeStamp(url: string): Promise<string | undefined> {
     try {
       const message = await this.prismaService.message.findFirst({
         where: {
@@ -120,7 +123,7 @@ export class PizzaioloRepository {
         },
       })
 
-      return message.ts
+      return message?.ts || undefined
     } catch (err) {
       Logger.error(err)
     }
