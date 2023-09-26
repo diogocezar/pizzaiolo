@@ -51,7 +51,6 @@ WORKDIR /usr/app
 COPY --from=ts-remover /usr/app ./
 
 RUN npx prisma generate
-RUN npx prisma migrate deploy
 RUN npx prisma db push
 
 EXPOSE 3000
